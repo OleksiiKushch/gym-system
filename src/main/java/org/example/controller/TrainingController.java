@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,6 +54,27 @@ public class TrainingController {
         }
         getTrainingFacade().createTraining(mapCreationFormToTrainingDto(form));
         return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    @DeleteMapping("/{trainingId}")
+    @Operation(summary = "Delete the specific Training with the supplied id.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Successfully deleted the specific Training with the supplied id.",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "You are not authenticated to view the resource.",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = """
+                    The resource you were trying to reach is not found. This occurs when a user is authenticated, but\s
+                    the target training with the id (which is set as a path variable) does not exist.
+                    """,
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Application failed to process the request.",
+                    content = @Content),
+    })
+    public ResponseEntity<?> deleteTrainee(@PathVariable("trainingId") Integer trainingId) {
+        getTrainingFacade().deleteTraining(trainingId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .build();
     }
 

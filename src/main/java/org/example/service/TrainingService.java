@@ -10,7 +10,9 @@ import java.util.Optional;
 public interface TrainingService {
 
     void createTraining(Training training);
+    Optional<Training> getTrainingForId(Integer id);
     Optional<Training> getTrainingForName(String name);
     List<Training> getTraineeTrainings(TraineeTrainingsCriteria criteria);
     List<Training> getTrainerTrainings(TrainerTrainingsCriteria criteria);
+    void removeTraining(Training training);
 }

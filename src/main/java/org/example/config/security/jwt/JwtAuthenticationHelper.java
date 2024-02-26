@@ -3,11 +3,11 @@ package org.example.config.security.jwt;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 
+import static org.example.constants.GeneralConstants.AUTHORIZATION_HEADER_KEY;
+import static org.example.constants.GeneralConstants.AUTHORIZATION_HEADER_VALUE_PREFIX;
+
 @Component
 public class JwtAuthenticationHelper {
-
-    private static final String AUTHORIZATION_HEADER_KEY = "Authorization";
-    private static final String AUTHORIZATION_HEADER_VALUE_PREFIX = "Bearer ";
 
     public String getAuthenticationHeader(HttpServletRequest request) {
         return request.getHeader(AUTHORIZATION_HEADER_KEY);

@@ -155,6 +155,27 @@ public class TrainerController {
                 .body(getTrainerFacade().getTrainersThatNotAssignedOnTrainee(username));
     }
 
+    @GetMapping("/{username}/report")
+    @Operation(summary = "Prepares a report on the specific trainer's work experience.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully prepares a report on the specific trainer's work experience.",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "You are not authenticated to view the resource.",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = """
+                    The resource you were trying to reach is not found. This occurs when a user is authenticated, but\s
+                    the target user with the username (which is set as a path variable) does not exist, or has an\s
+                    inappropriate type (role) - not a Trainee.
+                    """,
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Application failed to process the request.",
+                    content = @Content),
+    })
+    public ResponseEntity<?> getTrainerTotalHoursReport(@PathVariable("username") String username) {
+        return ResponseEntity.ok()
+                .body(getTrainerFacade().formTrainerTotalHoursReport(username));
+    }
+
     @Autowired
     public void setTrainerFacade(TrainerFacade trainerFacade) {
         this.trainerFacade = trainerFacade;

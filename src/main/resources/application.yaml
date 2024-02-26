@@ -3,11 +3,26 @@ spring:
     name: gym-system
   profiles:
     active: local
+  config:
+    import: optional:configserver:http://localhost:8888
+
+server:
+  port: 8080
 
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
   show-actuator: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+
+trainer-manager:
+  server-name: trainer-manager
+  update-training-sessions-mapping: training-session
+  get-training-report-mapping: report
 
 management:
   endpoints.web.exposure.include: 'prometheus, health'
@@ -28,15 +43,14 @@ management:
 
 application:
   security:
-    jwt:
-      secret-key: 3WHku3bJSlAmep3DaKmBn9jbTHUsHB2AJRA8AVXNUS756lD9GBF9Sd7b/EB7etaL
-      # 1800000 milliseconds = 30 minutes
-      expiration: 1800000
     bruteforceprevent:
       login:
         max-attempts: 3
         # 300000 milliseconds = 5 minutes
         block-time: 300000
+  fault-tolerance:
+    circuit-breaker:
+      timeout: 30000
 
 generate:
   random:

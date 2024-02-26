@@ -3,24 +3,30 @@ package org.example.facade.impl;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.example.dto.ActionType;
 import org.example.dto.TraineeDto;
 import org.example.dto.form.search.SearchTraineeTrainingsPayload;
+import org.example.dto.request.TrainerWorkloadRequest;
 import org.example.dto.response.AfterRegistrationResponse;
 import org.example.dto.response.SimpleTrainerResponse;
 import org.example.dto.response.TraineeProfileResponse;
 import org.example.dto.response.TraineeTrainingResponse;
 import org.example.entity.Trainee;
 import org.example.entity.Trainer;
+import org.example.entity.Training;
 import org.example.entity.search.TraineeTrainingsCriteria;
 import org.example.exception.AppException;
 import org.example.exception.NotFoundException;
 import org.example.facade.TraineeFacade;
 import org.example.service.TraineeService;
 import org.example.service.TrainerService;
+import org.example.service.TrainerWorkloadService;
 import org.example.service.TrainingService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.example.constants.GeneralConstants.DELETE_ACTIVE_TRAINEE_EXCEPTION_MSG;
@@ -37,6 +43,7 @@ public class DefaultTraineeFacade extends DefaultUserFacade implements TraineeFa
     private final TrainerService trainerService;
     private final TrainingService trainingService;
     private final ModelMapper modelMapper;
+    private final TrainerWorkloadService trainerWorkloadService;
 
     @Override
     public AfterRegistrationResponse registerTrainee(TraineeDto traineeDto) {
@@ -83,12 +90,27 @@ public class DefaultTraineeFacade extends DefaultUserFacade implements TraineeFa
     }
 
     @Override
+    @Transactional
     public void deleteTrainee(String username) {
         Trainee trainee = getTraineeByUsernameOrThrowException(username);
         if (trainee.isActive()) {
             throw new AppException(formExceptionMessage(DELETE_ACTIVE_TRAINEE_EXCEPTION_MSG, username));
         }
+        getTrainerWorkloadService().sendTrainerWorkload(trainee.getTrainings().stream()
+                .filter(training -> training.getTrainingDate().isAfter(getCurrentDate()))
+                .map(this::formDeleteTrainingRequest)
+                .toList());
         getTraineeService().deleteTrainee(trainee);
+    }
+
+    private LocalDate getCurrentDate() {
+        return LocalDate.now();
+    }
+
+    private TrainerWorkloadRequest formDeleteTrainingRequest(Training training) {
+        TrainerWorkloadRequest result = getModelMapper().map(training, TrainerWorkloadRequest.class);
+        result.setActionType(ActionType.DELETE);
+        return result;
     }
 
     private void setUpdatedFieldsForTrainee(Trainee currentTrainee, Trainee newTrainee) {

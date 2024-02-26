@@ -13,7 +13,6 @@ import org.example.entity.search.TraineeTrainingsCriteria;
 import org.example.entity.search.TrainerTrainingsCriteria;
 import org.example.service.TrainingService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +27,6 @@ public class DefaultTrainingService implements TrainingService {
     private final TraineeDao traineeDao;
 
     @Override
-    @Transactional
     public void createTraining(Training training) {
         Trainee trainee = training.getTrainee();
         Trainer trainer = training.getTrainer();
@@ -39,6 +37,11 @@ public class DefaultTrainingService implements TrainingService {
         }
 
         getTrainingDao().save(training);
+    }
+
+    @Override
+    public Optional<Training> getTrainingForId(Integer id) {
+        return getTrainingDao().findById(id);
     }
 
     private boolean isTrainerNotAssignedToTrainee(Trainee trainee, Trainer trainer) {
@@ -59,5 +62,10 @@ public class DefaultTrainingService implements TrainingService {
     @Override
     public List<Training> getTrainerTrainings(TrainerTrainingsCriteria criteria) {
         return IterableUtils.toList(getTrainingSearchDao().findTrainerTrainingsByCriteria(criteria));
+    }
+
+    @Override
+    public void removeTraining(Training training) {
+        getTrainingDao().deleteById(training.getId());
     }
 }

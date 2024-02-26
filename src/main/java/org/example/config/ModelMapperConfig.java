@@ -1,5 +1,6 @@
 package org.example.config;
 
+import org.example.dto.request.TrainerWorkloadRequest;
 import org.example.dto.response.TraineeTrainingResponse;
 import org.example.dto.response.TrainerTrainingResponse;
 import org.example.entity.Training;
@@ -28,6 +29,7 @@ public class ModelMapperConfig {
 
         modelMapper.addMappings(trainingToTraineeTrainingResponseMap());
         modelMapper.addMappings(trainingToTrainerTrainingResponseMap());
+        modelMapper.addMappings(trainingToTrainerWorkloadRequest());
 
         return modelMapper;
     }
@@ -46,6 +48,20 @@ public class ModelMapperConfig {
             @Override
             protected void configure() {
                 map().setTraineeName(source.getTrainee().getFirstName());
+            }
+        };
+    }
+
+    private PropertyMap<Training, TrainerWorkloadRequest> trainingToTrainerWorkloadRequest() {
+        return new PropertyMap<>() {
+            @Override
+            protected void configure() {
+                map().setTrainerUsername(source.getTrainer().getUsername());
+                map().setTrainerFirstName(source.getTrainer().getFirstName());
+                map().setTrainerLastName(source.getTrainer().getLastName());
+                map().setActive(source.getTrainer().getIsActive());
+                map().setTrainingDate(source.getTrainingDate());
+                map().setTrainingDuration(source.getTrainingDuration());
             }
         };
     }
