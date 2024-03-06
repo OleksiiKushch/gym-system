@@ -16,5 +16,5 @@ public interface TraineeDao {
     Optional<Trainee> findByUsername(String username);
     Optional<Trainee> findWithTrainingsByUsername(String username);
     Collection<Trainee> findAll();
-    void updateTrainersList(Integer id, Collection<Trainer> newTrainers);
+    void updateTrainersList(String username, Collection<Trainer> newTrainers);
 }

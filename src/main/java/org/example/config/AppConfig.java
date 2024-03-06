@@ -2,34 +2,32 @@ package org.example.config;
 
 import jakarta.validation.Validation;
 import jakarta.validation.ValidatorFactory;
-import org.example.config.storage.hibernate.HibernateConfig;
-import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.Set;
 
 @Configuration
+@EnableWebMvc
 @EnableAspectJAutoProxy
 @ComponentScan(basePackages = "org.example")
 @PropertySource("classpath:application.properties")
-@Import(HibernateConfig.class)
 public class AppConfig {
+
+    @Value("${default.date.format}")
+    private String defaultDateFormat;
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertyConfig() {
         return new PropertySourcesPlaceholderConfigurer();
-    }
-
-    @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
     }
 
     @Bean
@@ -38,7 +36,12 @@ public class AppConfig {
     }
 
     @Bean
-    public Map<String, Object> simpleSession() {
-        return new HashMap<>();
+    public Set<String> tokenStore() {
+        return new HashSet<>();
+    }
+
+    @Bean
+    public DateTimeFormatter defaultDateFormatter() {
+        return DateTimeFormatter.ofPattern(defaultDateFormat);
     }
 }

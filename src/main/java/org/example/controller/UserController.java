@@ -1,102 +1,127 @@
 package org.example.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
-import org.example.dto.TraineeDto;
-import org.example.dto.TrainerDto;
 import org.example.dto.form.ChangePasswordForm;
 import org.example.dto.form.LoginForm;
-import org.example.dto.form.RegistrationTraineeForm;
-import org.example.dto.form.RegistrationTrainerForm;
-import org.example.dto.form.UpdateTraineeForm;
-import org.example.dto.form.UpdateTrainerForm;
 import org.example.facade.UserFacade;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-
-import static org.example.constants.GeneralConstants.BAD_REQUEST;
-import static org.example.constants.GeneralConstants.OK_REQUEST;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Getter
-@Controller
+@RestController
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "User", description = """
+        Basic operations related to users such as login, logout, changing passwords, and toggling user activations\s
+        (activating/deactivating profiles).
+        """)
 public class UserController {
 
     private UserFacade userFacade;
     private ModelMapper modelMapper;
 
-    public String registerTrainee(@Valid RegistrationTraineeForm form) {
-        getUserFacade().registerTrainee(mapRegistrationFormToTraineeDto(form));
-        return OK_REQUEST;
-    }
-
-    public String registerTrainer(@Valid RegistrationTrainerForm form) {
-        getUserFacade().registerTrainer(mapRegistrationFormToTrainerDto(form));
-        return OK_REQUEST;
-    }
-
-    public String loginUser(@Valid LoginForm form) {
-        getUserFacade().login(form.getUsername(), form.getPassword());
-        return OK_REQUEST;
-    }
-
-    public String logoutUser() {
-        getUserFacade().logout();
-        return OK_REQUEST;
-    }
-
-    public String changePassword(@Valid ChangePasswordForm form) {
-        getUserFacade().changePassword(form.getCurrentPassword(), form.getNewPassword());
-        return OK_REQUEST;
-    }
-
-    public String updateTrainee(@Valid UpdateTraineeForm form) {
-        getUserFacade().updateTrainee(mapUpdateFormToTraineeDto(form));
-        return OK_REQUEST;
-    }
-
-    public String updateTrainer(@Valid UpdateTrainerForm form) {
-        getUserFacade().updateTrainer(mapUpdateFormToTrainerDto(form));
-        return OK_REQUEST;
-    }
-
-    public String deactivateUser() {
-        getUserFacade().deactivateUser();
-        return OK_REQUEST;
-    }
-
-    public String activateUser(String username) {
-        if (StringUtils.isEmpty(username)) {
-            return BAD_REQUEST;
+    @PostMapping("/login")
+    @Operation(summary = "Log in the user (validate user credentials (authenticate), and if everything is okay, save the user in a temporary simple session).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Successfully logged in (user saved in temporary simple session).",
+                    content = @Content),
+            @ApiResponse(responseCode = "400", description = "Invalid input data (form validation failed, for example some required fields are not present or the data format is incorrect).",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Application failed to process the request.",
+                    content = @Content),
+    })
+    public ResponseEntity<?> loginUser(@RequestBody @Valid LoginForm form, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest()
+                    .body(result.getFieldErrors());
         }
-        getUserFacade().activateUser(username);
-        return OK_REQUEST;
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(getUserFacade().login(form.getUsername(), form.getPassword()));
     }
 
-    public String deleteTrainee(String username) {
-        getUserFacade().deleteTrainee(username);
-        return OK_REQUEST;
+    @PostMapping("/logout")
+    @Operation(summary = "Log out the user (remove the user from the temporary simple session).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Successfully logged out (current user removed from temporary simple session).",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Application failed to process the request.",
+                    content = @Content),
+    })
+    public ResponseEntity<?> logoutUser(@RequestHeader("Authorization") String token) {
+        getUserFacade().logout(token);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .build();
     }
 
-    private TraineeDto mapRegistrationFormToTraineeDto(RegistrationTraineeForm form) {
-        return modelMapper.map(form, TraineeDto.class);
+    @PutMapping("/users/{username}")
+    @Operation(summary = "Change the user password.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Password changed successfully (user's current password updated to the new password).",
+                    content = @Content),
+            @ApiResponse(responseCode = "400", description = "Invalid input data (form validation failed, for example some required fields are not present or the data format is incorrect).",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "You are not authenticated to view the resource.",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = """
+                    The resource you were trying to reach is not found. This occurs when a user is authenticated, but\s
+                    the target user with the username (which is set as path variable) does not exist.
+                    """,
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Application failed to process the request.",
+                    content = @Content),
+    })
+    public ResponseEntity<?> changePassword(@RequestHeader("Authorization") String token, @PathVariable("username") String username,
+                                            @RequestBody @Valid ChangePasswordForm form, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest()
+                    .body(result.getFieldErrors());
+        }
+        getUserFacade().changePassword(username, form.getCurrentPassword(), form.getNewPassword());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .build();
     }
 
-    private TrainerDto mapRegistrationFormToTrainerDto(RegistrationTrainerForm form) {
-        return modelMapper.map(form, TrainerDto.class);
-    }
-
-    private TraineeDto mapUpdateFormToTraineeDto(UpdateTraineeForm form) {
-        return modelMapper.map(form, TraineeDto.class);
-    }
-
-    private TrainerDto mapUpdateFormToTrainerDto(UpdateTrainerForm form) {
-        return modelMapper.map(form, TrainerDto.class);
+    @PatchMapping("/users/{username}")
+    @Operation(summary = "Toggle user activation (activate/deactivate user profile).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Activation successfully toggled (user's current status changed to the opposite).",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "You are not authenticated to view the resource.",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = """
+                    The resource you were trying to reach is not found. This occurs when a user is authenticated, but\s
+                    the target user with the username (which is set as path variable) does not exist.
+                    """,
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Application failed to process the request.",
+                    content = @Content),
+    })
+    public ResponseEntity<?> toggleUserActivation(@RequestHeader("Authorization") String token, @PathVariable("username") String username) {
+        getUserFacade().toggleUserActivation(username);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .build();
     }
 
     @Autowired
-    public void setUserFacade(UserFacade userFacade) {
+    public void setUserFacade(@Qualifier("defaultUserFacade") UserFacade userFacade) {
         this.userFacade = userFacade;
     }
 

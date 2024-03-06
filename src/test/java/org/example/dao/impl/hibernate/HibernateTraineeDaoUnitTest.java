@@ -36,6 +36,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class HibernateTraineeDaoUnitTest {
+
     private static final Integer TEST_TRAINEE_ID = 1;
     private static final String TEST_TRAINEE_USERNAME = "John.Doe";
 
@@ -150,11 +151,13 @@ class HibernateTraineeDaoUnitTest {
     @Test
     void shouldUpdateTrainersList() {
         doNothing().when(sessionFactory).inTransaction(sessionConsumerArgCaptor.capture());
-        when(session.get(Trainee.class, TEST_TRAINEE_ID)).thenReturn(trainee);
+        when(session.createNamedQuery(FIND_TRAINEE_BY_USERNAME_QUERY_NAME, Trainee.class)).thenReturn(query);
+        when(query.setParameter(USERNAME_PARAM, TEST_TRAINEE_USERNAME)).thenReturn(query);
+        when(query.getSingleResult()).thenReturn(trainee);
         when(trainee.getTrainers()).thenReturn(currentTrainers);
         when(session.merge(trainee)).thenReturn(trainee);
 
-        testInstance.updateTrainersList(TEST_TRAINEE_ID, newTrainers);
+        testInstance.updateTrainersList(TEST_TRAINEE_USERNAME, newTrainers);
 
         Consumer<Session> sessionConsumer = sessionConsumerArgCaptor.getValue();
         sessionConsumer.accept(session);

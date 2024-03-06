@@ -1,0 +1,17 @@
+id,first_name,last_name,username,password,is_active
+
+# Trainees
+1,"John","Doe","John.Doe",123,TRUE
+2,"Jane","Green","Jane.Green",123,FALSE
+3,"Jim","Smith","Jim.Smith",123,TRUE
+4,"Jack","Brown","Jack.Brown",123,TRUE
+5,"Jack","Brown","Jack.Brown1",123,FALSE
+6,"Jack","Brown","Jack.Brown2",123,TRUE
+7,"Julia","Doe","Julia.Doe",123,TRUE
+
+# Trainers
+8,"Jerry","Smith","Jerry.Smith",123,TRUE
+9,"Janet","Bush","Janet.Bush",123,TRUE
+10,"Jacob","Harris","Jacob.Harris",123,TRUE
+11,"Jasmine","Robinson","Jasmine.Robinson",123,TRUE
+12,"Jonathon","Evans","Jonathon.Evans",123,FALSE

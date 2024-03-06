@@ -36,4 +36,5 @@ public class PersistenceLayerConstants {
 
     // Training type queries
     public static final String FIND_TRAINING_TYPE_BY_NAME_QUERY_NAME = "TrainingType.findByName";
+    public static final String FIND_ALL_TRAINING_TYPES_QUERY_NAME = "TrainingType.findAll";
 }

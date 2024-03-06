@@ -25,4 +25,11 @@ class DefaultTrainingTypeServiceUnitTest {
 
         verify(trainingTypeDao).findTrainingType(TrainingTypeEnum.BOXING);
     }
+
+    @Test
+    void shouldGetAllTrainingTypes() {
+        testInstance.getAllTrainingTypes();
+
+        verify(trainingTypeDao).findAllTrainingTypes();
+    }
 }
