@@ -171,7 +171,7 @@ class DefaultUserServiceUnitTest {
     void shouldUpdateUser() {
         testInstance.updateUser(user1);
 
-        verify(userDao).update(user1);
+        verify(userDao).save(user1);
     }
 
     void prepareNewUser() {

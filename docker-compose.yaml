@@ -1,0 +1,52 @@
+version: '3.8'
+
+volumes:
+  database:
+    driver: local
+
+services:
+
+  db:
+    image: mysql:8.3.0
+    container_name: database
+    restart: always
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_DATABASE: gymsystem
+      MYSQL_ROOT_PASSWORD: toor
+    volumes:
+      - database:/var/lib/mysql
+
+  gym-system:
+    image: gym-system:1.0
+    container_name: gym-system
+    build: '.'
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/gymsystem
+    volumes:
+      - ./logs:/app/logs
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=nimda
+    volumes:
+      - ./monitoring/config/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana:/var/lib/grafana
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/prometheus:/prometheus

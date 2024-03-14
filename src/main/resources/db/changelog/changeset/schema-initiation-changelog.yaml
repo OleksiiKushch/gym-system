@@ -1,0 +1,288 @@
+databaseChangeLog:
+
+  # Create tables
+
+  - changeSet:
+      id: create_trainee_trainer_table
+      author: admin
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: trainee_id
+                  type: INT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: trainer_id
+                  type: INT
+            tableName: trainee_trainer
+
+  - changeSet:
+      id: create_trainees_table
+      author: admin
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_trainees
+                  name: id
+                  type: INT
+              - column:
+                  name: date_of_birthday
+                  type: DATE
+              - column:
+                  name: address
+                  type: VARCHAR(255)
+            tableName: trainees
+
+  - changeSet:
+      id: create_trainers_table
+      author: admin
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_trainers
+                  name: id
+                  type: INT
+              - column:
+                  name: specialization
+                  type: INT
+            tableName: trainers
+
+  - changeSet:
+      id: create_training_types_table
+      author: admin
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_training_types
+                  name: id
+                  type: INT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: ENUM('CARDIO','STRENGTH','BOXING','YOGA')
+            tableName: training_types
+
+  - changeSet:
+      id: create_trainings_table
+      author: admin
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_trainings
+                  name: id
+                  type: INT
+              - column:
+                  name: trainee_id
+                  type: INT
+              - column:
+                  name: trainer_id
+                  type: INT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: training_name
+                  type: VARCHAR(255)
+              - column:
+                  name: training_type_id
+                  type: INT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: training_date
+                  type: DATE
+              - column:
+                  constraints:
+                    nullable: false
+                  name: training_duration
+                  type: INT
+            tableName: trainings
+
+  - changeSet:
+      id: create_users_table
+      author: admin
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_users
+                  name: id
+                  type: INT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: first_name
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: last_name
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: username
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: password
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: is_active
+                  type: BOOLEAN
+            tableName: users
+
+  # Add constraints
+
+  - changeSet:
+      id: add_unique_constraints_for_training_types_name
+      author: admin
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: name
+            constraintName: uc_training_types_name
+            tableName: training_types
+
+  - changeSet:
+      id: add_unique_constraints_for_user_username
+      author: admin
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: username
+            constraintName: uc_users_username
+            tableName: users
+
+  - changeSet:
+      id: add_fk_trainees_on_id
+      author: admin
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: id
+            baseTableName: trainees
+            constraintName: FK_TRAINEES_ON_ID
+            onDelete: CASCADE
+            referencedColumnNames: id
+            referencedTableName: users
+
+  - changeSet:
+      id: add_fk_trainers_on_id
+      author: admin
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: id
+            baseTableName: trainers
+            constraintName: FK_TRAINERS_ON_ID
+            referencedColumnNames: id
+            referencedTableName: users
+
+  - changeSet:
+      id: add_fk_trainers_on_specialization
+      author: admin
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: specialization
+            baseTableName: trainers
+            constraintName: FK_TRAINERS_ON_SPECIALIZATION
+            referencedColumnNames: id
+            referencedTableName: training_types
+
+  - changeSet:
+      id: add_fk_trainings_on_trainee
+      author: admin
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: trainee_id
+            baseTableName: trainings
+            constraintName: FK_TRAININGS_ON_TRAINEE
+            onDelete: CASCADE
+            referencedColumnNames: id
+            referencedTableName: trainees
+
+  - changeSet:
+      id: add_fk_trainings_on_trainer
+      author: admin
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: trainer_id
+            baseTableName: trainings
+            constraintName: FK_TRAININGS_ON_TRAINER
+            referencedColumnNames: id
+            referencedTableName: trainers
+
+  - changeSet:
+      id: add_fk_trainings_on_training_type
+      author: admin
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: training_type_id
+            baseTableName: trainings
+            constraintName: FK_TRAININGS_ON_TRAINING_TYPE
+            referencedColumnNames: id
+            referencedTableName: training_types
+
+  - changeSet:
+      id: add_fk_trainee_trainer_on_trainee
+      author: admin
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: trainee_id
+            baseTableName: trainee_trainer
+            constraintName: fk_trainee_trainer_on_trainee
+            referencedColumnNames: id
+            referencedTableName: trainees
+
+  - changeSet:
+      id: add_fk_trainee_trainer_on_trainer
+      author: admin
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: trainer_id
+            baseTableName: trainee_trainer
+            constraintName: fk_trainee_trainer_on_trainer
+            referencedColumnNames: id
+            referencedTableName: trainers

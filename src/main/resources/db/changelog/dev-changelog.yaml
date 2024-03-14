@@ -1,0 +1,12 @@
+databaseChangeLog:
+
+  - include:
+      file: changeset/schema-initiation-changelog.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changeset/import-essential-data-changelog.yaml
+      relativeToChangelogFile: true
+
+  - include: # import some test data for imitation real environment
+      file: changeset/import-project-data-changelog.yaml
+      relativeToChangelogFile: true

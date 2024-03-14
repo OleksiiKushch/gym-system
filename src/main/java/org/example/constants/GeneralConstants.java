@@ -6,12 +6,8 @@ public class GeneralConstants {
 
     public static final String PASSWORD_PLACEHOLDER = "****";
 
-    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
-
     public static final String TRAINING_TYPE_ENUM_NAME = "Training Type";
     public static final String SPECIALIZATION_ENUM_NAME = "Specialization";
-
-    public static final String CREATE_HIBERNATE_SESSION_FACTORY_EXCEPTION_MSG = "Failed to create Hibernate SessionFactory";
 
     // Service layer exception messages
     public static final String DELETE_ACTIVE_TRAINEE_EXCEPTION_MSG = "Active trainee (username: %s) cannot be deleted";
@@ -25,4 +21,8 @@ public class GeneralConstants {
     public static final String NEW_AUTHORIZATION_TOKEN_LOG_MSG = "Generated new authorization token: {}";
     public static final String STORED_TOKENS_LOG_MSG = "Stored tokens: {}";
     public static final String DEACTIVATE_TOKEN_LOG_MSG = "Deactivated token: {}";
+    public static final String START_TRANSACTION_LOG_MSG = "Starting Transaction for method: {}, Transaction ID: {}";
+    public static final String END_TRANSACTION_LOG_MSG = "Ending Transaction for method: {}, Transaction ID: {}";
+
+    public static final String ERROR_PARAMETER = "Error";
 }

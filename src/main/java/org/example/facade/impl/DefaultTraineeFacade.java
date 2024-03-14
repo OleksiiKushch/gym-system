@@ -48,7 +48,7 @@ public class DefaultTraineeFacade extends DefaultUserFacade implements TraineeFa
 
     @Override
     public TraineeProfileResponse getTraineeProfile(String username) {
-        return getTraineeService().getFullTraineeForUsername(username)
+        return getTraineeService().getTraineeForUsername(username)
                 .map(trainee -> getModelMapper().map(trainee, TraineeProfileResponse.class))
                 .orElseThrow(() -> new NotFoundException(formExceptionMessage(TRAINEE_NOT_FOUND_EXCEPTION_MSG, username)));
     }
@@ -68,13 +68,11 @@ public class DefaultTraineeFacade extends DefaultUserFacade implements TraineeFa
         Trainee actualTrainee = getTraineeByUsernameOrThrowException(username);
         Trainee newTrainee = getModelMapper().map(traineeDto, Trainee.class);
         setUpdatedFieldsForTrainee(actualTrainee, newTrainee);
-        getTraineeService().updateTrainee(actualTrainee);
-        return getTraineeProfile(actualTrainee.getUsername());
+        return getModelMapper().map(getTraineeService().updateTrainee(actualTrainee), TraineeProfileResponse.class);
     }
 
     @Override
     public List<SimpleTrainerResponse> updateTraineeTrainers(String username, List<String> usernamesOfTrainers) {
-        getTraineeByUsernameOrThrowException(username); // check if trainee exists
         List<Trainer> trainers = usernamesOfTrainers.stream()
                 .map(this::getTrainerByUsernameOrThrowException)
                 .toList();
@@ -90,7 +88,7 @@ public class DefaultTraineeFacade extends DefaultUserFacade implements TraineeFa
         if (trainee.isActive()) {
             throw new AppException(formExceptionMessage(DELETE_ACTIVE_TRAINEE_EXCEPTION_MSG, username));
         }
-        getTraineeService().deleteTraineeForUsername(username);
+        getTraineeService().deleteTrainee(trainee);
     }
 
     private void setUpdatedFieldsForTrainee(Trainee currentTrainee, Trainee newTrainee) {

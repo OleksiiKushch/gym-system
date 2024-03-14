@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: gym-system
+  profiles:
+    active: local
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  show-actuator: true
+
+management:
+  endpoints.web.exposure.include: 'prometheus, health'
+  endpoint:
+    health:
+      show-details: always
+      group:
+        services_group.include: db, swagger
+        base_group.include: diskSpace, ping
+  metrics:
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+generate:
+  random:
+    password:
+      length: 10
+password:
+  characters:
+    allow: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*()
+
+default:
+  date:
+    format: yyyy-MM-dd

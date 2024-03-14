@@ -23,13 +23,13 @@ class DefaultTrainingTypeServiceUnitTest {
     void shouldGetTrainingTypeForName() {
         testInstance.getTrainingTypeForName(TrainingTypeEnum.BOXING);
 
-        verify(trainingTypeDao).findTrainingType(TrainingTypeEnum.BOXING);
+        verify(trainingTypeDao).findByName(TrainingTypeEnum.BOXING);
     }
 
     @Test
     void shouldGetAllTrainingTypes() {
         testInstance.getAllTrainingTypes();
 
-        verify(trainingTypeDao).findAllTrainingTypes();
+        verify(trainingTypeDao).findAll();
     }
 }

@@ -1,5 +1,7 @@
 package org.example.service.impl;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.example.entity.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +12,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
@@ -25,9 +29,13 @@ class SimpleAuthenticateTokenServiceUnitTest {
 
     @Mock
     Set<String> tokenStore;
+    @Mock
+    MeterRegistry meterRegistry;
 
     @Mock
     User user;
+    @Mock
+    Counter counter;
 
     @Test
     void shouldGenerateToken() {
@@ -42,6 +50,7 @@ class SimpleAuthenticateTokenServiceUnitTest {
     @Test
     void shouldVerifyToken() {
         doReturn(true).when(tokenStore).contains(SOME_TEST_TOKEN);
+        doReturn(counter).when(meterRegistry).counter(anyString(), anyList());
 
         boolean actualResult = testInstance.verify(SOME_TEST_TOKEN);
 

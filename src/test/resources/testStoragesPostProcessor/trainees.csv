@@ -1,3 +1,0 @@
-userId,firstName,lastName,username,password,isActive,dateOfBirthday,address
-1,John,Doe,John.Doe,password,TRUE,1990-01-01,123 Main St
-2,Jane,Doe,Jane.Doe,password,TRUE,1990-02-02,234 Park Ave

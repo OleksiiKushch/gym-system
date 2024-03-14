@@ -1,48 +1,40 @@
 package org.example.service.impl;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.example.dao.TraineeDao;
 import org.example.entity.Trainee;
 import org.example.entity.Trainer;
+import org.example.exception.NotFoundException;
 import org.example.service.TraineeService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+import static org.example.constants.GeneralConstants.TRAINEE_NOT_FOUND_EXCEPTION_MSG;
+
 @Getter
+@RequiredArgsConstructor
 @Service
 public class DefaultTraineeService implements TraineeService {
 
-    @Autowired
-    @Qualifier("hibernateTraineeDao")
-    private TraineeDao traineeDao;
+    private final TraineeDao traineeDao;
 
     @Override
     public void createTrainee(Trainee trainee) {
-        getTraineeDao().insert(trainee);
+        getTraineeDao().save(trainee);
     }
 
     @Override
-    public void updateTrainee(Trainee trainee) {
-        getTraineeDao().update(trainee);
+    public Trainee updateTrainee(Trainee trainee) {
+        return getTraineeDao().save(trainee);
     }
 
     @Override
     public void deleteTrainee(Trainee trainee) {
-        getTraineeDao().remove(trainee.getUserId());
-    }
-
-    @Override
-    public void deleteTraineeForUsername(String username) {
-        getTraineeDao().removeByUsername(username);
-    }
-
-    @Override
-    public Optional<Trainee> getTraineeForId(Integer id) {
-        return getTraineeDao().findById(id);
+        getTraineeDao().delete(trainee);
     }
 
     @Override
@@ -51,12 +43,18 @@ public class DefaultTraineeService implements TraineeService {
     }
 
     @Override
-    public Optional<Trainee> getFullTraineeForUsername(String username) {
-        return getTraineeDao().findWithTrainingsByUsername(username);
+    @Transactional
+    public void updateTrainersList(String username, List<Trainer> newTrainers) {
+        getTraineeDao().findByUsername(username)
+                        .ifPresentOrElse(trainee -> {
+                            trainee.getTrainers().clear();
+                            trainee.getTrainers().addAll(newTrainers);
+                        }, () -> {
+                            throw new NotFoundException(formExceptionMessage(username));
+                        });
     }
 
-    @Override
-    public void updateTrainersList(String username, List<Trainer> newTrainers) {
-        getTraineeDao().updateTrainersList(username, newTrainers);
+    private String formExceptionMessage(Object... args) {
+        return String.format(TRAINEE_NOT_FOUND_EXCEPTION_MSG, args);
     }
 }

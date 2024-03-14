@@ -39,4 +39,6 @@ build/
 .DS_Store
 
 ### My ###
-/log
+/logs
+/monitoring/grafana
+/monitoring/prometheus

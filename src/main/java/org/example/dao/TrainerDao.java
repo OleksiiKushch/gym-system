@@ -1,17 +1,18 @@
 package org.example.dao;
 
 import org.example.entity.Trainer;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
-import java.util.Collection;
 import java.util.Optional;
 
-public interface TrainerDao {
+import static org.example.constants.PersistenceLayerConstants.FIND_ALL_TRAINERS_THAT_NOT_ASSIGNED_TO_TRAINEE_QUERY_NAME;
+import static org.example.constants.PersistenceLayerConstants.USERNAME_PARAM;
 
-    void insert(Trainer trainer);
-    void update(Trainer trainer);
-    Optional<Trainer> findById(Integer id);
+public interface TrainerDao extends CrudRepository<Trainer, Integer> {
+
     Optional<Trainer> findByUsername(String username);
-    Optional<Trainer> findWithTrainingsByUsername(String username);
-    Collection<Trainer> findAll();
-    Collection<Trainer> findAllThatNotAssignedOnTrainee(String traineeUsername);
+    @Query(name = FIND_ALL_TRAINERS_THAT_NOT_ASSIGNED_TO_TRAINEE_QUERY_NAME)
+    Iterable<Trainer> findAllThatNotAssignedOnTrainee(@Param(USERNAME_PARAM) String traineeUsername);
 }

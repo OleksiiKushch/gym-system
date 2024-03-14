@@ -11,6 +11,5 @@ public interface TrainerService {
     void updateTrainer(Trainer trainer);
     Optional<Trainer> getTrainerForId(Integer id);
     Optional<Trainer> getTrainerForUsername(String username);
-    Optional<Trainer> getFullTrainerForUsername(String username);
     List<Trainer> getAllTrainersThatNotAssignedOnTrainee(String traineeUsername);
 }

@@ -1,0 +1,11 @@
+databaseChangeLog:
+
+  # Import essential data
+
+  - changeSet:
+      id: fill_training_types_table
+      author: admin
+      changes:
+        - loadData:
+            tableName: training_types
+            file: db/data/essential/training_types.csv
