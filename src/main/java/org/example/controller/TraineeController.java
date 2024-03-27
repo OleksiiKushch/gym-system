@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -80,7 +79,7 @@ public class TraineeController {
             @ApiResponse(responseCode = "500", description = "Application failed to process the request.",
                     content = @Content),
     })
-    public ResponseEntity<?> updateTrainee(@RequestHeader("Authorization") String token, @PathVariable("username") String username,
+    public ResponseEntity<?> updateTrainee(@PathVariable("username") String username,
                                            @RequestBody @Valid UpdateTraineeForm form, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest()
@@ -108,7 +107,7 @@ public class TraineeController {
             @ApiResponse(responseCode = "500", description = "Application failed to process the request.",
                     content = @Content),
     })
-    public ResponseEntity<?> updateTraineeTrainers(@RequestHeader("Authorization") String token, @PathVariable("username") String username,
+    public ResponseEntity<?> updateTraineeTrainers(@PathVariable("username") String username,
                                                    @RequestParam("usernamesOfTrainers") List<String> usernamesOfTrainers) {
         return ResponseEntity.ok()
                 .body(getTraineeFacade().updateTraineeTrainers(username, usernamesOfTrainers));
@@ -130,7 +129,7 @@ public class TraineeController {
             @ApiResponse(responseCode = "500", description = "Application failed to process the request.",
                     content = @Content),
     })
-    public ResponseEntity<?> getTraineeProfile(@RequestHeader("Authorization") String token, @PathVariable("username") String username) {
+    public ResponseEntity<?> getTraineeProfile(@PathVariable("username") String username) {
         return ResponseEntity.ok()
                 .body(getTraineeFacade().getTraineeProfile(username));
     }
@@ -153,7 +152,7 @@ public class TraineeController {
             @ApiResponse(responseCode = "500", description = "Application failed to process the request.",
                     content = @Content),
     })
-    public ResponseEntity<?> getTraineeTrainings(@RequestHeader("Authorization") String token, @PathVariable("username") String username,
+    public ResponseEntity<?> getTraineeTrainings(@PathVariable("username") String username,
                                                  @RequestBody @Valid SearchTraineeTrainingsPayload form, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest()
@@ -181,7 +180,7 @@ public class TraineeController {
             @ApiResponse(responseCode = "500", description = "Application failed to process the request.",
                     content = @Content),
     })
-    public ResponseEntity<?> deleteTrainee(@RequestHeader("Authorization") String token, @PathVariable("username") String username) {
+    public ResponseEntity<?> deleteTrainee(@PathVariable("username") String username) {
         getTraineeFacade().deleteTrainee(username);
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .build();

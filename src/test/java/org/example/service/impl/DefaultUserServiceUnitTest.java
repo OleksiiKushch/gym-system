@@ -13,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,8 +27,6 @@ class DefaultUserServiceUnitTest {
     private static final String USER_1_USERNAME = "Alex.Bush";
     private static final String USER_2_USERNAME = "John.Doe";
     private static final String USER_3_USERNAME = "John.Doe1";
-    private static final String PASSWORD = "password";
-    private static final String SOME_PASSWORD = "some_password";
     private static final String EXPECTED_USERNAME_WITOUT_SERIAL_NUMBER = "John.Doe";
     private static final String EXPECTED_USERNAME_WITH_SERIAL_NUMBER_1 = "John.Doe1";
     private static final String EXPECTED_USERNAME_WITH_SERIAL_NUMBER_2 = "John.Doe2";
@@ -135,36 +132,6 @@ class DefaultUserServiceUnitTest {
 
         assertTrue(actualResult.isPresent());
         assertEquals(user1, actualResult.get());
-    }
-
-    @Test
-    void shouldAuthenticateUser_whenPasswordsMatch() {
-        when(user1.getPassword()).thenReturn(PASSWORD);
-        when(userDao.findByUsername(USER_1_USERNAME)).thenReturn(Optional.of(user1));
-
-        var actualResult = testInstance.authenticateUser(USER_1_USERNAME, PASSWORD);
-
-        assertTrue(actualResult.isPresent());
-        assertEquals(user1, actualResult.get());
-    }
-
-    @Test
-    void shouldDoesntAuthenticateUser_whenPasswordsDontMatch() {
-        when(user1.getPassword()).thenReturn(PASSWORD);
-        when(userDao.findByUsername(USER_1_USERNAME)).thenReturn(Optional.of(user1));
-
-        var actualResult = testInstance.authenticateUser(USER_1_USERNAME, SOME_PASSWORD);
-
-        assertTrue(actualResult.isEmpty());
-    }
-
-    @Test
-    void shouldDoesntAuthenticateUser_whenUserNotFound() {
-        when(userDao.findByUsername(USER_1_USERNAME)).thenReturn(Optional.empty());
-
-        var actualResult = testInstance.authenticateUser(USER_1_USERNAME, PASSWORD);
-
-        assertTrue(actualResult.isEmpty());
     }
 
     @Test

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.Getter;
+import org.example.config.security.bruteforceprevent.LoginAttemptService;
 import org.example.dto.form.ChangePasswordForm;
 import org.example.dto.form.LoginForm;
 import org.example.facade.UserFacade;
@@ -22,9 +23,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static org.example.constants.GeneralConstants.TOO_MANY_REQUESTS_EXCEPTION_MSG;
 
 @Getter
 @RestController
@@ -37,6 +39,7 @@ public class UserController {
 
     private UserFacade userFacade;
     private ModelMapper modelMapper;
+    private LoginAttemptService loginAttemptService;
 
     @PostMapping("/login")
     @Operation(summary = "Log in the user (validate user credentials (authenticate), and if everything is okay, save the user in a temporary simple session).")
@@ -49,26 +52,16 @@ public class UserController {
                     content = @Content),
     })
     public ResponseEntity<?> loginUser(@RequestBody @Valid LoginForm form, BindingResult result) {
+        if (getLoginAttemptService().isBlocked()) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body(TOO_MANY_REQUESTS_EXCEPTION_MSG);
+        }
         if (result.hasErrors()) {
             return ResponseEntity.badRequest()
                     .body(result.getFieldErrors());
         }
         return ResponseEntity.status(HttpStatus.OK)
                 .body(getUserFacade().login(form.getUsername(), form.getPassword()));
-    }
-
-    @PostMapping("/logout")
-    @Operation(summary = "Log out the user (remove the user from the temporary simple session).")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Successfully logged out (current user removed from temporary simple session).",
-                    content = @Content),
-            @ApiResponse(responseCode = "500", description = "Application failed to process the request.",
-                    content = @Content),
-    })
-    public ResponseEntity<?> logoutUser(@RequestHeader("Authorization") String token) {
-        getUserFacade().logout(token);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .build();
     }
 
     @PutMapping("/users/{username}")
@@ -88,7 +81,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Application failed to process the request.",
                     content = @Content),
     })
-    public ResponseEntity<?> changePassword(@RequestHeader("Authorization") String token, @PathVariable("username") String username,
+    public ResponseEntity<?> changePassword(@PathVariable("username") String username,
                                             @RequestBody @Valid ChangePasswordForm form, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest()
@@ -114,7 +107,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Application failed to process the request.",
                     content = @Content),
     })
-    public ResponseEntity<?> toggleUserActivation(@RequestHeader("Authorization") String token, @PathVariable("username") String username) {
+    public ResponseEntity<?> toggleUserActivation(@PathVariable("username") String username) {
         getUserFacade().toggleUserActivation(username);
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .build();
@@ -128,5 +121,10 @@ public class UserController {
     @Autowired
     public void setModelMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
+    }
+
+    @Autowired
+    public void setLoginAttemptService(LoginAttemptService loginAttemptService) {
+        this.loginAttemptService = loginAttemptService;
     }
 }

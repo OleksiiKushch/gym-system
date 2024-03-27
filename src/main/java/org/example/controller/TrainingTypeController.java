@@ -11,7 +11,6 @@ import org.example.facade.TrainingTypeFacade;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,7 +35,7 @@ public class TrainingTypeController {
             @ApiResponse(responseCode = "500", description = "Application failed to process the request.",
                     content = @Content),
     })
-    public ResponseEntity<?> getTrainingTypes(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> getTrainingTypes() {
         return ResponseEntity.ok()
                 .body(getTrainingTypeFacade().getTrainingTypes());
     }

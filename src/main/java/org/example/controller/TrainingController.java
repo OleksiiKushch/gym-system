@@ -18,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -46,7 +45,7 @@ public class TrainingController {
             @ApiResponse(responseCode = "500", description = "Application failed to process the request.",
                     content = @Content),
     })
-    public ResponseEntity<?> organizeTraining(@RequestHeader("Authorization") String token, @RequestBody @Valid CreateTrainingForm form, BindingResult result) {
+    public ResponseEntity<?> organizeTraining(@RequestBody @Valid CreateTrainingForm form, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest()
                     .body(result.getFieldErrors());

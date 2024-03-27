@@ -14,8 +14,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.example.constants.PersistenceLayerConstants.FIND_ALL_TRAINERS_THAT_NOT_ASSIGNED_TO_TRAINEE_QUERY_NAME;
@@ -49,7 +52,28 @@ public class Trainer extends User {
     @ManyToMany(mappedBy = "trainers")
     private List<Trainee> trainees = new ArrayList<>();
 
-    public void setSpecialization(TrainingType specialization) {
-        this.specialization = specialization;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(Role.TRAINER.name()));
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

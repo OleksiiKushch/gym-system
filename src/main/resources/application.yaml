@@ -26,6 +26,18 @@ management:
       export:
         enabled: true
 
+application:
+  security:
+    jwt:
+      secret-key: 3WHku3bJSlAmep3DaKmBn9jbTHUsHB2AJRA8AVXNUS756lD9GBF9Sd7b/EB7etaL
+      # 1800000 milliseconds = 30 minutes
+      expiration: 1800000
+    bruteforceprevent:
+      login:
+        max-attempts: 3
+        # 300000 milliseconds = 5 minutes
+        block-time: 300000
+
 generate:
   random:
     password:

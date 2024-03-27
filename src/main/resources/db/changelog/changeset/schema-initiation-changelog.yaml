@@ -167,7 +167,34 @@ databaseChangeLog:
                   type: BOOLEAN
             tableName: users
 
+  - changeSet:
+      id: create_revoked_tokens_table
+      author: admin
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_revoked_tokens
+                  name: id
+                  type: INT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: token
+                  type: VARCHAR(255)
+              - column:
+                  name: expiration_date_time
+                  type: DATETIME
+            tableName: revoked_tokens
+
   # Add constraints
+
+  # Add unique constraints
 
   - changeSet:
       id: add_unique_constraints_for_training_types_name
@@ -188,6 +215,18 @@ databaseChangeLog:
             columnNames: username
             constraintName: uc_users_username
             tableName: users
+
+  - changeSet:
+      id: add_unique_constraints_for_revoked_tokens_token
+      author: admin
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: token
+            constraintName: uc_revoked_tokens_token
+            tableName: revoked_tokens
+
+  # Add foreign key constraints
 
   - changeSet:
       id: add_fk_trainees_on_id

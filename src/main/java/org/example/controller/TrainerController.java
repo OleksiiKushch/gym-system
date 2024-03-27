@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -76,7 +75,7 @@ public class TrainerController {
             @ApiResponse(responseCode = "500", description = "Application failed to process the request.",
                     content = @Content),
     })
-    public ResponseEntity<?> updateTrainer(@RequestHeader("Authorization") String token, @PathVariable("username") String username,
+    public ResponseEntity<?> updateTrainer(@PathVariable("username") String username,
                                            @RequestBody @Valid UpdateTrainerForm form, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest()
@@ -102,7 +101,7 @@ public class TrainerController {
             @ApiResponse(responseCode = "500", description = "Application failed to process the request.",
                     content = @Content),
     })
-    public ResponseEntity<?> getTrainerProfile(@RequestHeader("Authorization") String token, @PathVariable("username") String username) {
+    public ResponseEntity<?> getTrainerProfile(@PathVariable("username") String username) {
         return ResponseEntity.ok()
                 .body(getTrainerFacade().getTrainerProfile(username));
     }
@@ -125,7 +124,7 @@ public class TrainerController {
             @ApiResponse(responseCode = "500", description = "Application failed to process the request.",
                     content = @Content),
     })
-    public ResponseEntity<?> getTrainerTrainings(@RequestHeader("Authorization") String token, @PathVariable("username") String username,
+    public ResponseEntity<?> getTrainerTrainings(@PathVariable("username") String username,
                                                  @RequestBody @Valid SearchTrainerTrainingsPayload form, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest()
@@ -151,8 +150,7 @@ public class TrainerController {
             @ApiResponse(responseCode = "500", description = "Application failed to process the request.",
                     content = @Content),
     })
-    public ResponseEntity<?> getTrainersThatNotAssignedOnTrainee(@RequestHeader("Authorization") String token,
-                                                                 @PathVariable("traineeUsername") String username) {
+    public ResponseEntity<?> getTrainersThatNotAssignedOnTrainee(@PathVariable("traineeUsername") String username) {
         return ResponseEntity.ok()
                 .body(getTrainerFacade().getTrainersThatNotAssignedOnTrainee(username));
     }

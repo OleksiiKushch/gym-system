@@ -2,19 +2,22 @@ package org.example.facade.impl;
 
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
+import org.example.config.security.jwt.JwtManager;
 import org.example.entity.User;
 import org.example.exception.AppException;
 import org.example.exception.NotFoundException;
 import org.example.facade.UserFacade;
-import org.example.service.AuthenticateTokenService;
 import org.example.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import static org.example.constants.GeneralConstants.PASSWORD_DOES_NOT_MUTCH_EXCEPTION_MSG;
-import static org.example.constants.GeneralConstants.USERNAME_OR_PASSWORD_DO_NOT_MUTCH_EXCEPTION_MSG;
 import static org.example.constants.GeneralConstants.USER_NOT_FOUND_EXCEPTION_MSG;
 
 @Getter
@@ -23,32 +26,24 @@ import static org.example.constants.GeneralConstants.USER_NOT_FOUND_EXCEPTION_MS
 public class DefaultUserFacade implements UserFacade {
 
     private UserService userService;
-    private AuthenticateTokenService authenticateTokenService;
+    private JwtManager jwtManager;
+    private PasswordEncoder passwordEncoder;
+    private AuthenticationManager authenticationManager;
 
     @Override
     public String login(String username, String password) {
-        User user = getUserService().authenticateUser(username, password)
-                .orElseThrow(() -> new AppException(USERNAME_OR_PASSWORD_DO_NOT_MUTCH_EXCEPTION_MSG));
-        return getAuthenticateTokenService().generate(user);
-    }
-
-    @Override
-    public void logout(String token) {
-        getAuthenticateTokenService().deactivate(token);
-    }
-
-    @Override
-    public boolean authorizationCurrentUser(String token) {
-        return getAuthenticateTokenService().verify(token);
+        getAuthenticationManager().authenticate(createAuthentication(username, password));
+        User user = getUserByUsernameOrThrowException(username);
+        return getJwtManager().generateToken(user);
     }
 
     @Override
     public void changePassword(String username, String currentPassword, String newPassword) {
         User user = getUserByUsernameOrThrowException(username);
-        if (!user.getPassword().equals(currentPassword)) {
+        if (!getPasswordEncoder().matches(currentPassword, user.getPassword())) {
             throw new AppException(PASSWORD_DOES_NOT_MUTCH_EXCEPTION_MSG);
         }
-        user.setPassword(newPassword);
+        user.setPassword(getPasswordEncoder().encode(newPassword));
         getUserService().updateUser(user);
     }
 
@@ -59,12 +54,15 @@ public class DefaultUserFacade implements UserFacade {
         getUserService().updateUser(currentUser);
     }
 
-    protected void processNewUserProfile(User user) {
+    protected String processNewUserProfile(User user) {
         user.setActive(Boolean.TRUE);
         user.setUsername(getUserService().calculateUsername(user));
-        if (StringUtils.isEmpty(user.getPassword())) {
-            user.setPassword(getUserService().generateRandomPassword());
+        String password = user.getPassword();
+        if (StringUtils.isEmpty(password)) {
+            password = getUserService().generateRandomPassword();
         }
+        user.setPassword(getPasswordEncoder().encode(password));
+        return password;
     }
 
     protected User getUserByUsernameOrThrowException(String username) {
@@ -76,13 +74,27 @@ public class DefaultUserFacade implements UserFacade {
         return String.format(message, args);
     }
 
+    private Authentication createAuthentication(String username, String password) {
+        return new UsernamePasswordAuthenticationToken(username, password);
+    }
+
     @Autowired
     public void setUserService(@Lazy UserService userService) {
         this.userService = userService;
     }
 
     @Autowired
-    public void setAuthenticateTokenService(@Lazy AuthenticateTokenService authenticateTokenService) {
-        this.authenticateTokenService = authenticateTokenService;
+    public void setJwtManager(JwtManager jwtManager) {
+        this.jwtManager = jwtManager;
+    }
+
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Autowired
+    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
     }
 }
