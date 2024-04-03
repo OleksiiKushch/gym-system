@@ -41,6 +41,10 @@ public abstract class InMemoryAbstractUserDao<T extends User> {
         return Optional.ofNullable(getUserStorage().get(id));
     }
 
+    public Optional<T> findByUsername(String username) {
+        throw new UnsupportedOperationException();
+    }
+
     public Collection<T> findAll() {
         return getUserStorage().values();
     }

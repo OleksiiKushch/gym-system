@@ -7,6 +7,9 @@ import org.example.entity.Trainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+import java.util.Optional;
+
 @Slf4j
 @Component
 public class InMemoryTrainerDao extends InMemoryAbstractUserDao<Trainer> implements TrainerDao {
@@ -21,5 +24,15 @@ public class InMemoryTrainerDao extends InMemoryAbstractUserDao<Trainer> impleme
     @Autowired
     public void setTrainerStorage(InMemoryStorageWithIntId<Trainer> trainerStorage) {
         this.trainerStorage = trainerStorage;
+    }
+
+    @Override
+    public Optional<Trainer> findWithTrainingsByUsername(String username) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Collection<Trainer> findAllThatNotAssignedOnTrainee(String traineeUsername) {
+        throw new UnsupportedOperationException();
     }
 }

@@ -4,9 +4,11 @@ import org.example.dto.TraineeDto;
 import org.example.entity.Trainee;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -22,15 +24,21 @@ class TraineeMapperUnitTest {
     private static final String TEST_DATE_OF_BIRTHDAY = "1990-01-01";
     private static final String TEST_ADDRESS = "address";
 
-    @Spy
+    @InjectMocks
     TraineeMapper testInstance;
 
     @Mock
+    StringToLocalDateMapper stringToLocalDateMapper;
+
+    @Mock
     TraineeDto traineeDto;
+    @Mock
+    LocalDate localDate;
 
     @Test
     void shouldMap() {
         prepareTraineeDto();
+        when(stringToLocalDateMapper.map(TEST_DATE_OF_BIRTHDAY)).thenReturn(localDate);
 
         Trainee actualResult = testInstance.map(traineeDto);
 
@@ -38,7 +46,7 @@ class TraineeMapperUnitTest {
         assertEquals(TEST_FIRST_NAME, actualResult.getFirstName());
         assertEquals(TEST_LAST_NAME, actualResult.getLastName());
         assertEquals(TEST_PASSWORD, actualResult.getPassword());
-        assertEquals(TEST_DATE_OF_BIRTHDAY, actualResult.getDateOfBirthday().toString());
+        assertEquals(localDate, actualResult.getDateOfBirthday());
         assertEquals(TEST_ADDRESS, actualResult.getAddress());
     }
 

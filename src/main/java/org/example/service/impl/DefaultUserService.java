@@ -5,11 +5,13 @@ import org.example.dao.UserDao;
 import org.example.entity.User;
 import org.example.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Getter
@@ -27,6 +29,7 @@ public class DefaultUserService implements UserService {
     private String passwordAllowedCharacters;
 
     @Autowired
+    @Qualifier("hibernateUserDao")
     private UserDao userDao;
 
     @Override
@@ -51,8 +54,30 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
+    public Optional<User> getUserForUsername(String username) {
+        return getUserDao().findByUsername(username);
+    }
+
+    @Override
     public List<User> getAllUsers() {
         return getUserDao().findAll().stream().toList();
+    }
+
+    /**
+     * Default user authentication by username and password. Retrieve user by username and match passwords.
+     */
+    @Override
+    public Optional<User> authenticateUser(String username, String password) {
+        Optional<User> user = userDao.findByUsername(username);
+        if (user.isPresent() && user.get().getPassword().equals(password)) {
+            return user;
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public void updateUser(User user) {
+        userDao.update(user);
     }
 
     private int processSerialNumber(String username, String newUsername) {

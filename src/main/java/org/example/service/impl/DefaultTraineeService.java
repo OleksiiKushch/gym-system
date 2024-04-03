@@ -3,10 +3,13 @@ package org.example.service.impl;
 import lombok.Getter;
 import org.example.dao.TraineeDao;
 import org.example.entity.Trainee;
+import org.example.entity.Trainer;
 import org.example.service.TraineeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Getter
@@ -14,6 +17,7 @@ import java.util.Optional;
 public class DefaultTraineeService implements TraineeService {
 
     @Autowired
+    @Qualifier("hibernateTraineeDao")
     private TraineeDao traineeDao;
 
     @Override
@@ -32,7 +36,27 @@ public class DefaultTraineeService implements TraineeService {
     }
 
     @Override
+    public void deleteTraineeForUsername(String username) {
+        getTraineeDao().removeByUsername(username);
+    }
+
+    @Override
     public Optional<Trainee> getTraineeForId(Integer id) {
         return getTraineeDao().findById(id);
+    }
+
+    @Override
+    public Optional<Trainee> getTraineeForUsername(String username) {
+        return getTraineeDao().findByUsername(username);
+    }
+
+    @Override
+    public Optional<Trainee> getFullTraineeForUsername(String username) {
+        return getTraineeDao().findWithTrainingsByUsername(username);
+    }
+
+    @Override
+    public void updateTrainersList(Integer id, List<Trainer> newTrainers) {
+        getTraineeDao().updateTrainersList(id, newTrainers);
     }
 }

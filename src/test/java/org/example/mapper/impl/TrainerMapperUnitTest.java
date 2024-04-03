@@ -2,10 +2,12 @@ package org.example.mapper.impl;
 
 import org.example.dto.TrainerDto;
 import org.example.entity.Trainer;
+import org.example.entity.TrainingType;
+import org.example.entity.TrainingTypeEnum;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,17 +21,23 @@ class TrainerMapperUnitTest {
     private static final String TEST_FIRST_NAME = "John";
     private static final String TEST_LAST_NAME = "Doe";
     private static final String TEST_PASSWORD = "password";
-    private static final String TEST_SPECIALIZATION = "specialization";
+    private static final String TEST_SPECIALIZATION_STR = TrainingTypeEnum.CARDIO.name();
 
-    @Spy
+    @InjectMocks
     TrainerMapper testInstance;
 
     @Mock
+    TrainingTypeMapper trainingTypeMapper;
+
+    @Mock
     TrainerDto trainerDto;
+    @Mock
+    TrainingType trainingType;
 
     @Test
     void shouldMap() {
         prepareTrainerDto();
+        when(trainingTypeMapper.map(TEST_SPECIALIZATION_STR)).thenReturn(trainingType);
 
         Trainer actualResult = testInstance.map(trainerDto);
 
@@ -37,7 +45,7 @@ class TrainerMapperUnitTest {
         assertEquals(TEST_FIRST_NAME, actualResult.getFirstName());
         assertEquals(TEST_LAST_NAME, actualResult.getLastName());
         assertEquals(TEST_PASSWORD, actualResult.getPassword());
-        assertEquals(TEST_SPECIALIZATION, actualResult.getSpecialization());
+        assertEquals(trainingType, actualResult.getSpecialization());
     }
 
     @Test
@@ -56,6 +64,6 @@ class TrainerMapperUnitTest {
         when(trainerDto.getFirstName()).thenReturn(TEST_FIRST_NAME);
         when(trainerDto.getLastName()).thenReturn(TEST_LAST_NAME);
         when(trainerDto.getPassword()).thenReturn(TEST_PASSWORD);
-        when(trainerDto.getSpecialization()).thenReturn(TEST_SPECIALIZATION);
+        when(trainerDto.getSpecialization()).thenReturn(TEST_SPECIALIZATION_STR);
     }
 }
