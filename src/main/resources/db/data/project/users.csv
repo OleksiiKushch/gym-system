@@ -1,17 +1,17 @@
 id,first_name,last_name,username,password,is_active
 
 # Trainees
-1,"John","Doe","John.Doe",123,TRUE
-2,"Jane","Green","Jane.Green",123,FALSE
-3,"Jim","Smith","Jim.Smith",123,TRUE
-4,"Jack","Brown","Jack.Brown",123,TRUE
-5,"Jack","Brown","Jack.Brown1",123,FALSE
-6,"Jack","Brown","Jack.Brown2",123,TRUE
-7,"Julia","Doe","Julia.Doe",123,TRUE
+1,"John","Doe","John.Doe",$2a$10$ZRwIeZUF4RvRe5A5Lzm9.u.Ar180a7Nw8zYVjUGKReI.BiGy01baW,TRUE
+2,"Jane","Green","Jane.Green",$2a$10$JRSgHJO2RGpDVckwA0gSyOFEVUkGESLAUKz4U6ykETnrrLKQHd1sy,FALSE
+3,"Jim","Smith","Jim.Smith",$2a$10$qkzRMzPUbRJmUOgDIF0phunZttNDGXul5gfrycyLiJb.S79HnOEXi,TRUE
+4,"Jack","Brown","Jack.Brown",$2a$10$dFAhTqL05tkjxiHpNj8JheiL8igXv8Mx8YfJ3d0lTknmFJE3AVmLu,TRUE
+5,"Jack","Brown","Jack.Brown1",$2a$10$TXpBDnGrNTGuexH7.ZzaLepl7Uf9E1ke6JCH3cgNMWHtf33Z7ngOi,FALSE
+6,"Jack","Brown","Jack.Brown2",$2a$10$foqb3Pb5s541mI4ZWyWkHekVzht48BkG4WKshE4qeptIZ19sDS/96,TRUE
+7,"Julia","Doe","Julia.Doe",$2a$10$FI.Ww3jTiePLmx3jmoETrOoqahDnW/bbvwDQJxJ6QiqEF9UJyfYUK,TRUE
 
 # Trainers
-8,"Jerry","Smith","Jerry.Smith",123,TRUE
-9,"Janet","Bush","Janet.Bush",123,TRUE
-10,"Jacob","Harris","Jacob.Harris",123,TRUE
-11,"Jasmine","Robinson","Jasmine.Robinson",123,TRUE
-12,"Jonathon","Evans","Jonathon.Evans",123,FALSE
+8,"Jerry","Smith","Jerry.Smith",$2a$10$PuGZyTPSlWE6XPD909hRuejcSV80YMO17FMCuEW6pWzTk0RKDO7Jq,TRUE
+9,"Janet","Bush","Janet.Bush",$2a$10$TRqg2P/eaOMMDD6qUdmfFeg7SMgoGoIYA6si.0InyAQzyvoKo35vG,TRUE
+10,"Jacob","Harris","Jacob.Harris",$2a$10$Qhe.NMdeCgDOhUku6z6WTuQpSxa1ul182Dz52zrqB9ZRTBKUrNTCq,TRUE
+11,"Jasmine","Robinson","Jasmine.Robinson",$2a$10$6gGtPgT0c9UxpmcfVCIFDOB6MZb67RwUrrgvAi5TYHsKfdelCPd7u,TRUE
+12,"Jonathon","Evans","Jonathon.Evans",$2a$10$kX5AgS828JZsRP/D1JhK3e7KniA/rSdnCjlRxnyryp5mdP/1cSaHC,FALSE

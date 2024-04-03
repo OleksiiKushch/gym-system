@@ -5,7 +5,6 @@ import org.example.dto.form.RegistrationTrainerForm;
 import org.example.dto.form.UpdateTrainerForm;
 import org.example.dto.form.search.SearchTrainerTrainingsPayload;
 import org.example.dto.response.AfterRegistrationResponse;
-import org.example.dto.response.SimpleTrainerResponse;
 import org.example.dto.response.TrainerProfileResponse;
 import org.example.dto.response.TrainerTrainingResponse;
 import org.example.facade.TrainerFacade;
@@ -29,7 +28,6 @@ import static org.mockito.Mockito.doReturn;
 class TrainerControllerUnitTest {
 
     private static final String TEST_TRAINER_USERNAME = "John.Doe";
-    private static final String TEST_AUTHORIZATION_TOKEN = "authorization_token";
 
     @InjectMocks
     TrainerController testInstance;
@@ -54,8 +52,6 @@ class TrainerControllerUnitTest {
     TrainerProfileResponse trainerProfileResponse;
     @Mock
     AfterRegistrationResponse afterRegistrationResponse;
-    @Mock
-    List<SimpleTrainerResponse> trainerDtoList;
     @Mock
     List<TrainerTrainingResponse> trainingDtoList;
     @Mock
@@ -92,7 +88,7 @@ class TrainerControllerUnitTest {
         doReturn(trainerDto).when(modelMapper).map(updateTrainerForm, TrainerDto.class);
         doReturn(trainerProfileResponse).when(trainerFacade).updateTrainer(TEST_TRAINER_USERNAME, trainerDto);
 
-        var actualResult = testInstance.updateTrainer(TEST_AUTHORIZATION_TOKEN, TEST_TRAINER_USERNAME, updateTrainerForm, result);
+        var actualResult = testInstance.updateTrainer(TEST_TRAINER_USERNAME, updateTrainerForm, result);
 
         assertNotNull(actualResult);
         assertEquals(HttpStatus.OK, actualResult.getStatusCode());
@@ -104,7 +100,7 @@ class TrainerControllerUnitTest {
         doReturn(true).when(result).hasErrors();
         doReturn(errors).when(result).getFieldErrors();
 
-        var actualResult = testInstance.updateTrainer(TEST_AUTHORIZATION_TOKEN, TEST_TRAINER_USERNAME, updateTrainerForm, result);
+        var actualResult = testInstance.updateTrainer(TEST_TRAINER_USERNAME, updateTrainerForm, result);
 
         assertNotNull(actualResult);
         assertEquals(HttpStatus.BAD_REQUEST, actualResult.getStatusCode());
@@ -115,7 +111,7 @@ class TrainerControllerUnitTest {
     void shouldGetTrainerProfile() {
         doReturn(trainerProfileResponse).when(trainerFacade).getTrainerProfile(TEST_TRAINER_USERNAME);
 
-        var actualResult = testInstance.getTrainerProfile(TEST_AUTHORIZATION_TOKEN, TEST_TRAINER_USERNAME);
+        var actualResult = testInstance.getTrainerProfile(TEST_TRAINER_USERNAME);
 
         assertNotNull(actualResult);
         assertEquals(HttpStatus.OK, actualResult.getStatusCode());
@@ -127,7 +123,7 @@ class TrainerControllerUnitTest {
         doReturn(false).when(result).hasErrors();
         doReturn(trainingDtoList).when(trainerFacade).getTrainerTrainings(TEST_TRAINER_USERNAME, searchTrainingsForm);
 
-        var actualResult = testInstance.getTrainerTrainings(TEST_AUTHORIZATION_TOKEN, TEST_TRAINER_USERNAME, searchTrainingsForm, result);
+        var actualResult = testInstance.getTrainerTrainings(TEST_TRAINER_USERNAME, searchTrainingsForm, result);
 
         assertNotNull(actualResult);
         assertEquals(HttpStatus.OK, actualResult.getStatusCode());
@@ -139,7 +135,7 @@ class TrainerControllerUnitTest {
         doReturn(true).when(result).hasErrors();
         doReturn(errors).when(result).getFieldErrors();
 
-        var actualResult = testInstance.getTrainerTrainings(TEST_AUTHORIZATION_TOKEN, TEST_TRAINER_USERNAME, searchTrainingsForm, result);
+        var actualResult = testInstance.getTrainerTrainings(TEST_TRAINER_USERNAME, searchTrainingsForm, result);
 
         assertNotNull(actualResult);
         assertEquals(HttpStatus.BAD_REQUEST, actualResult.getStatusCode());
@@ -150,7 +146,7 @@ class TrainerControllerUnitTest {
     void shouldGetTrainersThatNotAssignedOnTrainee() {
         doReturn(trainingDtoList).when(trainerFacade).getTrainersThatNotAssignedOnTrainee(TEST_TRAINER_USERNAME);
 
-        var actualResult = testInstance.getTrainersThatNotAssignedOnTrainee(TEST_AUTHORIZATION_TOKEN, TEST_TRAINER_USERNAME);
+        var actualResult = testInstance.getTrainersThatNotAssignedOnTrainee(TEST_TRAINER_USERNAME);
 
         assertNotNull(actualResult);
         assertEquals(HttpStatus.OK, actualResult.getStatusCode());

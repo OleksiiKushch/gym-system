@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.example.validation.StringLocalDate;
 
 import static org.example.constants.GeneralConstants.PASSWORD_PLACEHOLDER;
@@ -23,14 +24,13 @@ public class RegistrationTraineeForm {
     private String dateOfBirthday;
     private String address;
 
-    @Override
-    public String toString() {
-        return "RegistrationTraineeForm{" +
-                "firstName=" + firstName +
-                ", lastName=" + lastName +
-                ", password=" + PASSWORD_PLACEHOLDER +
-                ", confirmPassword=" + PASSWORD_PLACEHOLDER +
-                ", dateOfBirthday=" + dateOfBirthday +
-                ", address=" + address + '}';
+    @ToString.Include(name = "password")
+    private String maskPassword() {
+        return PASSWORD_PLACEHOLDER;
+    }
+
+    @ToString.Include(name = "confirmPassword")
+    private String maskConfirmPassword() {
+        return PASSWORD_PLACEHOLDER;
     }
 }

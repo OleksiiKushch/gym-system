@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import org.example.config.security.bruteforceprevent.LoginAttemptService;
 import org.example.dto.form.ChangePasswordForm;
 import org.example.dto.form.LoginForm;
 import org.example.facade.UserFacade;
@@ -15,6 +16,7 @@ import org.springframework.validation.FieldError;
 
 import java.util.List;
 
+import static org.example.constants.GeneralConstants.TOO_MANY_REQUESTS_EXCEPTION_MSG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.doNothing;
@@ -35,6 +37,8 @@ class UserControllerUnitTest {
     UserFacade userFacade;
     @Mock
     ModelMapper modelMapper;
+    @Mock
+    LoginAttemptService loginAttemptService;
 
     @Mock
     LoginForm loginForm;
@@ -73,13 +77,14 @@ class UserControllerUnitTest {
     }
 
     @Test
-    void shouldLogoutUser() {
-        doNothing().when(userFacade).logout(TEST_AUTHORIZATION_TOKEN);
+    void shouldDoesntLoginUser_whenUserIsBlocked() {
+        doReturn(true).when(loginAttemptService).isBlocked();
 
-        var actualResult = testInstance.logoutUser(TEST_AUTHORIZATION_TOKEN);
+        var actualResult = testInstance.loginUser(loginForm, result);
 
         assertNotNull(actualResult);
-        assertEquals(HttpStatus.NO_CONTENT, actualResult.getStatusCode());
+        assertEquals(HttpStatus.TOO_MANY_REQUESTS, actualResult.getStatusCode());
+        assertEquals(TOO_MANY_REQUESTS_EXCEPTION_MSG, actualResult.getBody());
     }
 
     @Test
@@ -89,7 +94,7 @@ class UserControllerUnitTest {
         doReturn(TEST_NEW_PASSWORD).when(changePasswordForm).getNewPassword();
         doNothing().when(userFacade).changePassword(TEST_USERNAME, TEST_PASSWORD, TEST_NEW_PASSWORD);
 
-        var actualResult = testInstance.changePassword(TEST_AUTHORIZATION_TOKEN, TEST_USERNAME, changePasswordForm, result);
+        var actualResult = testInstance.changePassword(TEST_USERNAME, changePasswordForm, result);
 
         assertNotNull(actualResult);
         assertEquals(HttpStatus.NO_CONTENT, actualResult.getStatusCode());
@@ -100,7 +105,7 @@ class UserControllerUnitTest {
         doReturn(true).when(result).hasErrors();
         doReturn(errors).when(result).getFieldErrors();
 
-        var actualResult = testInstance.changePassword(TEST_AUTHORIZATION_TOKEN, TEST_USERNAME, changePasswordForm, result);
+        var actualResult = testInstance.changePassword(TEST_USERNAME, changePasswordForm, result);
 
         assertNotNull(actualResult);
         assertEquals(HttpStatus.BAD_REQUEST, actualResult.getStatusCode());
@@ -111,7 +116,7 @@ class UserControllerUnitTest {
     void shouldToggleUserActivation() {
         doNothing().when(userFacade).toggleUserActivation(TEST_USERNAME);
 
-        var actualResult = testInstance.toggleUserActivation(TEST_AUTHORIZATION_TOKEN, TEST_USERNAME);
+        var actualResult = testInstance.toggleUserActivation(TEST_USERNAME);
 
         assertNotNull(actualResult);
         assertEquals(HttpStatus.NO_CONTENT, actualResult.getStatusCode());

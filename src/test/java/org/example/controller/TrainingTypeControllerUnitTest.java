@@ -18,8 +18,6 @@ import static org.mockito.Mockito.doReturn;
 @ExtendWith(MockitoExtension.class)
 class TrainingTypeControllerUnitTest {
 
-    private static final String TEST_AUTHORIZATION_TOKEN = "authorization_token";
-
     @InjectMocks
     TrainingTypeController testInstance;
 
@@ -33,7 +31,7 @@ class TrainingTypeControllerUnitTest {
     void shouldGetTrainingTypes() {
         doReturn(trainingTypeDtoList).when(trainingTypeFacade).getTrainingTypes();
 
-        var actualResult = testInstance.getTrainingTypes(TEST_AUTHORIZATION_TOKEN);
+        var actualResult = testInstance.getTrainingTypes();
 
         assertNotNull(actualResult);
         assertEquals(HttpStatus.OK, actualResult.getStatusCode());

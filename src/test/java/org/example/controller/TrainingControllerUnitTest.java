@@ -23,8 +23,6 @@ import static org.mockito.Mockito.doReturn;
 @ExtendWith(MockitoExtension.class)
 class TrainingControllerUnitTest {
 
-    private static final String TEST_AUTHORIZATION_TOKEN = "authorization_token";
-
     @InjectMocks
     TrainingController testInstance;
 
@@ -49,7 +47,7 @@ class TrainingControllerUnitTest {
         doReturn(trainingDto).when(modelMapper).map(createTrainingForm, TrainingDto.class);
         doNothing().when(trainingFacade).createTraining(trainingDto);
 
-        var actualResult = testInstance.organizeTraining(TEST_AUTHORIZATION_TOKEN, createTrainingForm, result);
+        var actualResult = testInstance.organizeTraining(createTrainingForm, result);
 
         assertNotNull(actualResult);
         assertEquals(HttpStatus.CREATED, actualResult.getStatusCode());
@@ -60,7 +58,7 @@ class TrainingControllerUnitTest {
         doReturn(true).when(result).hasErrors();
         doReturn(errors).when(result).getFieldErrors();
 
-        var actualResult = testInstance.organizeTraining(TEST_AUTHORIZATION_TOKEN, createTrainingForm, result);
+        var actualResult = testInstance.organizeTraining(createTrainingForm, result);
 
         assertNotNull(actualResult);
         assertEquals(HttpStatus.BAD_REQUEST, actualResult.getStatusCode());

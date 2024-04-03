@@ -3,7 +3,6 @@ package org.example.facade.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.example.dto.TraineeDto;
 import org.example.dto.form.search.SearchTraineeTrainingsPayload;
-import org.example.dto.response.AfterRegistrationResponse;
 import org.example.dto.response.SimpleTrainerResponse;
 import org.example.dto.response.TraineeProfileResponse;
 import org.example.dto.response.TraineeTrainingResponse;
@@ -26,6 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -50,6 +50,7 @@ class DefaultTraineeFacadeUnitTest {
     private static final LocalDate TEST_DATE_OF_BURTHDAY = LocalDate.of(1990, 1, 1);
     private static final String TEST_ADDRESS = "Some address";
     private static final String TEST_PASSWORD = "password";
+    private static final String ENCODED_PASSWORD = "encodedPassword";
     private static final String GENERATED_PASSWORD = "generated_password";
     private static final String TEST_TRAINER_USERNAME1 = "TrainerUsername1";
     private static final String TEST_TRAINER_USERNAME2 = "TrainerUsername2";
@@ -71,6 +72,8 @@ class DefaultTraineeFacadeUnitTest {
     TrainingService trainingService;
     @Mock
     ModelMapper modelMapper;
+    @Mock
+    PasswordEncoder passwordEncoder;
 
     @Mock
     Trainee trainee;
@@ -80,8 +83,6 @@ class DefaultTraineeFacadeUnitTest {
     Trainee updatedTrainee;
     @Mock
     TraineeDto traineeDto;
-    @Mock
-    AfterRegistrationResponse afterRegistrationResponse;
     @Mock
     TraineeProfileResponse traineeProfileResponse;
     @Mock
@@ -114,6 +115,7 @@ class DefaultTraineeFacadeUnitTest {
     @BeforeEach
     void setUp() {
         testInstance.setUserService(userService);
+        testInstance.setPasswordEncoder(passwordEncoder);
         trainings = List.of(training1, training2);
     }
 
@@ -121,15 +123,14 @@ class DefaultTraineeFacadeUnitTest {
     void shouldRegisterTrainee() {
         setUpTraineeDtoForRegistration();
         when(trainee.getPassword()).thenReturn(TEST_PASSWORD);
-        when(modelMapper.map(trainee, AfterRegistrationResponse.class)).thenReturn(afterRegistrationResponse);
+        when(passwordEncoder.encode(anyString())).thenReturn(ENCODED_PASSWORD);
 
-        AfterRegistrationResponse actualResult = testInstance.registerTrainee(traineeDto);
+        testInstance.registerTrainee(traineeDto);
 
         verifyRegistrationTrainee();
         verify(trainee).setActive(true);
         verify(userService, never()).generateRandomPassword();
-        verify(trainee, never()).setPassword(anyString());
-        assertEquals(afterRegistrationResponse, actualResult);
+        verify(trainee).setPassword(ENCODED_PASSWORD);
     }
 
     @Test
@@ -137,15 +138,14 @@ class DefaultTraineeFacadeUnitTest {
         setUpTraineeDtoForRegistration();
         when(trainee.getPassword()).thenReturn(null);
         when(userService.generateRandomPassword()).thenReturn(GENERATED_PASSWORD);
-        when(modelMapper.map(trainee, AfterRegistrationResponse.class)).thenReturn(afterRegistrationResponse);
+        when(passwordEncoder.encode(GENERATED_PASSWORD)).thenReturn(ENCODED_PASSWORD);
 
-        AfterRegistrationResponse actualResult = testInstance.registerTrainee(traineeDto);
+        testInstance.registerTrainee(traineeDto);
 
         verifyRegistrationTrainee();
         verify(trainee).setActive(true);
         verify(userService).generateRandomPassword();
-        verify(trainee).setPassword(GENERATED_PASSWORD);
-        assertEquals(afterRegistrationResponse, actualResult);
+        verify(trainee).setPassword(ENCODED_PASSWORD);
     }
 
     @Test
@@ -153,15 +153,14 @@ class DefaultTraineeFacadeUnitTest {
         setUpTraineeDtoForRegistration();
         when(trainee.getPassword()).thenReturn(StringUtils.EMPTY);
         when(userService.generateRandomPassword()).thenReturn(GENERATED_PASSWORD);
-        when(modelMapper.map(trainee, AfterRegistrationResponse.class)).thenReturn(afterRegistrationResponse);
+        when(passwordEncoder.encode(GENERATED_PASSWORD)).thenReturn(ENCODED_PASSWORD);
 
-        AfterRegistrationResponse actualResult = testInstance.registerTrainee(traineeDto);
+        testInstance.registerTrainee(traineeDto);
 
         verifyRegistrationTrainee();
         verify(trainee).setActive(true);
         verify(userService).generateRandomPassword();
-        verify(trainee).setPassword(GENERATED_PASSWORD);
-        assertEquals(afterRegistrationResponse, actualResult);
+        verify(trainee).setPassword(ENCODED_PASSWORD);
     }
 
     @Test

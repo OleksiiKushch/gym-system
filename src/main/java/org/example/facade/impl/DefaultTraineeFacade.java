@@ -41,9 +41,9 @@ public class DefaultTraineeFacade extends DefaultUserFacade implements TraineeFa
     @Override
     public AfterRegistrationResponse registerTrainee(TraineeDto traineeDto) {
         Trainee trainee = getModelMapper().map(traineeDto, Trainee.class);
-        processNewUserProfile(trainee);
+        String password = processNewUserProfile(trainee);
         getTraineeService().createTrainee(trainee);
-        return getModelMapper().map(trainee, AfterRegistrationResponse.class);
+        return new AfterRegistrationResponse(trainee.getUsername(), password);
     }
 
     @Override

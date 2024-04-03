@@ -30,7 +30,6 @@ import static org.mockito.Mockito.doReturn;
 class TraineeControllerUnitTest {
 
     private static final String TEST_TRAINEE_USERNAME = "John.Doe";
-    private static final String TEST_AUTHORIZATION_TOKEN = "authorization_token";
 
     @InjectMocks
     TraineeController testInstance;
@@ -95,7 +94,7 @@ class TraineeControllerUnitTest {
         doReturn(traineeDto).when(modelMapper).map(updateTraineeForm, TraineeDto.class);
         doReturn(traineeProfileResponse).when(traineeFacade).updateTrainee(TEST_TRAINEE_USERNAME, traineeDto);
 
-        var actualResult = testInstance.updateTrainee(TEST_AUTHORIZATION_TOKEN, TEST_TRAINEE_USERNAME, updateTraineeForm, result);
+        var actualResult = testInstance.updateTrainee(TEST_TRAINEE_USERNAME, updateTraineeForm, result);
 
         assertNotNull(actualResult);
         assertEquals(HttpStatus.OK, actualResult.getStatusCode());
@@ -107,7 +106,7 @@ class TraineeControllerUnitTest {
         doReturn(true).when(result).hasErrors();
         doReturn(errors).when(result).getFieldErrors();
 
-        var actualResult = testInstance.updateTrainee(TEST_AUTHORIZATION_TOKEN, TEST_TRAINEE_USERNAME, updateTraineeForm, result);
+        var actualResult = testInstance.updateTrainee(TEST_TRAINEE_USERNAME, updateTraineeForm, result);
 
         assertNotNull(actualResult);
         assertEquals(HttpStatus.BAD_REQUEST, actualResult.getStatusCode());
@@ -118,7 +117,7 @@ class TraineeControllerUnitTest {
     void shouldUpdateTraineeTrainers() {
         doReturn(trainerDtoList).when(traineeFacade).updateTraineeTrainers(TEST_TRAINEE_USERNAME, usernamesOfTrainers);
 
-        var actualResult = testInstance.updateTraineeTrainers(TEST_AUTHORIZATION_TOKEN, TEST_TRAINEE_USERNAME, usernamesOfTrainers);
+        var actualResult = testInstance.updateTraineeTrainers(TEST_TRAINEE_USERNAME, usernamesOfTrainers);
 
         assertNotNull(actualResult);
         assertEquals(HttpStatus.OK, actualResult.getStatusCode());
@@ -129,7 +128,7 @@ class TraineeControllerUnitTest {
     void shouldGetTraineeProfile() {
         doReturn(traineeProfileResponse).when(traineeFacade).getTraineeProfile(TEST_TRAINEE_USERNAME);
 
-        var actualResult = testInstance.getTraineeProfile(TEST_AUTHORIZATION_TOKEN, TEST_TRAINEE_USERNAME);
+        var actualResult = testInstance.getTraineeProfile(TEST_TRAINEE_USERNAME);
 
         assertNotNull(actualResult);
         assertEquals(HttpStatus.OK, actualResult.getStatusCode());
@@ -141,7 +140,7 @@ class TraineeControllerUnitTest {
         doReturn(false).when(result).hasErrors();
         doReturn(trainingDtoList).when(traineeFacade).getTraineeTrainings(TEST_TRAINEE_USERNAME, searchTrainingsForm);
 
-        var actualResult = testInstance.getTraineeTrainings(TEST_AUTHORIZATION_TOKEN, TEST_TRAINEE_USERNAME, searchTrainingsForm, result);
+        var actualResult = testInstance.getTraineeTrainings(TEST_TRAINEE_USERNAME, searchTrainingsForm, result);
 
         assertNotNull(actualResult);
         assertEquals(HttpStatus.OK, actualResult.getStatusCode());
@@ -153,7 +152,7 @@ class TraineeControllerUnitTest {
         doReturn(true).when(result).hasErrors();
         doReturn(errors).when(result).getFieldErrors();
 
-        var actualResult = testInstance.getTraineeTrainings(TEST_AUTHORIZATION_TOKEN, TEST_TRAINEE_USERNAME, searchTrainingsForm, result);
+        var actualResult = testInstance.getTraineeTrainings(TEST_TRAINEE_USERNAME, searchTrainingsForm, result);
 
         assertNotNull(actualResult);
         assertEquals(HttpStatus.BAD_REQUEST, actualResult.getStatusCode());
@@ -164,7 +163,7 @@ class TraineeControllerUnitTest {
     void shouldDeleteTrainee() {
         doNothing().when(traineeFacade).deleteTrainee(TEST_TRAINEE_USERNAME);
 
-        var actualResult = testInstance.deleteTrainee(TEST_AUTHORIZATION_TOKEN, TEST_TRAINEE_USERNAME);
+        var actualResult = testInstance.deleteTrainee(TEST_TRAINEE_USERNAME);
 
         assertNotNull(actualResult);
         assertEquals(HttpStatus.NO_CONTENT, actualResult.getStatusCode());

@@ -36,9 +36,9 @@ public class DefaultTrainerFacade extends DefaultUserFacade implements TrainerFa
     @Override
     public AfterRegistrationResponse registerTrainer(TrainerDto trainerDto) {
         Trainer trainer = getModelMapper().map(trainerDto, Trainer.class);
-        processNewUserProfile(trainer);
+        String password = processNewUserProfile(trainer);
         getTrainerService().createTrainer(trainer);
-        return getModelMapper().map(trainer, AfterRegistrationResponse.class);
+        return new AfterRegistrationResponse(trainer.getUsername(), password);
     }
 
     @Override

@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import static org.example.constants.GeneralConstants.PASSWORD_PLACEHOLDER;
 
@@ -17,10 +18,8 @@ public class LoginForm {
     @NotEmpty
     private String password;
 
-    @Override
-    public String toString() {
-        return "LoginForm{" +
-                "username=" + username +
-                ", password=" + PASSWORD_PLACEHOLDER + '}';
+    @ToString.Include(name = "password")
+    private String maskPassword() {
+        return PASSWORD_PLACEHOLDER;
     }
 }

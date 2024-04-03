@@ -1,12 +1,17 @@
 package org.example.service.impl;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.IterableUtils;
 import org.example.dao.UserDao;
 import org.example.entity.User;
 import org.example.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -14,8 +19,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static org.example.constants.GeneralConstants.USER_NOT_FOUND_EXCEPTION_MSG;
+
 @Getter
-@RequiredArgsConstructor
 @Service
 public class DefaultUserService implements UserService {
 
@@ -29,7 +35,9 @@ public class DefaultUserService implements UserService {
     @Value("${password.characters.allow}")
     private String passwordAllowedCharacters;
 
-    private final UserDao userDao;
+    private UserDao userDao;
+    private PasswordEncoder passwordEncoder;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     public String calculateUsername(User user) {
@@ -62,21 +70,15 @@ public class DefaultUserService implements UserService {
         return IterableUtils.toList(getUserDao().findAll());
     }
 
-    /**
-     * Default user authentication by username and password. Retrieve user by username and match passwords.
-     */
     @Override
-    public Optional<User> authenticateUser(String username, String password) {
-        Optional<User> user = userDao.findByUsername(username);
-        if (user.isPresent() && user.get().getPassword().equals(password)) {
-            return user;
-        }
-        return Optional.empty();
+    public void updateUser(User user) {
+        getUserDao().save(user);
     }
 
     @Override
-    public void updateUser(User user) {
-        userDao.save(user);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return getUserForUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(formExceptionMessage(username)));
     }
 
     private int processSerialNumber(String username, String newUsername) {
@@ -89,5 +91,24 @@ public class DefaultUserService implements UserService {
 
     private char getRandomCharacter(SecureRandom random) {
         return getPasswordAllowedCharacters().charAt(random.nextInt(getPasswordAllowedCharacters().length()));
+    }
+
+    private String formExceptionMessage(String username) {
+        return String.format(USER_NOT_FOUND_EXCEPTION_MSG, username);
+    }
+
+    @Autowired
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
+    @Autowired
+    public void setPasswordEncoder(@Lazy PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Autowired
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 }

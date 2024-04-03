@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.example.entity.TrainingTypeEnum;
 import org.example.validation.StringEnum;
 
@@ -25,13 +26,13 @@ public class RegistrationTrainerForm {
     @StringEnum(enumClass = TrainingTypeEnum.class, enumName = SPECIALIZATION_ENUM_NAME)
     private String specialization;
 
-    @Override
-    public String toString() {
-        return "RegistrationTrainerForm{" +
-                "firstName=" + firstName +
-                ", lastName=" + lastName +
-                ", password=" + PASSWORD_PLACEHOLDER +
-                ", confirmPassword=" + PASSWORD_PLACEHOLDER +
-                ", specialization=" + specialization + '}';
+    @ToString.Include(name = "password")
+    private String maskPassword() {
+        return PASSWORD_PLACEHOLDER;
+    }
+
+    @ToString.Include(name = "confirmPassword")
+    private String maskConfirmPassword() {
+        return PASSWORD_PLACEHOLDER;
     }
 }
