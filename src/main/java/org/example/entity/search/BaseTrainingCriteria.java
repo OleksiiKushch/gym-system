@@ -1,5 +1,6 @@
 package org.example.entity.search;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
@@ -8,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.example.entity.Training;
-import org.hibernate.query.criteria.HibernateCriteriaBuilder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class BaseTrainingCriteria {
     private LocalDate fromDate;
     private LocalDate toDate;
 
-    public List<Predicate> formPredicatesForHibernateCriteria(HibernateCriteriaBuilder builder, Root<Training> root) {
+    public List<Predicate> formPredicatesForJpaCriteria(CriteriaBuilder builder, Root<Training> root) {
         List<Predicate> predicates = new ArrayList<>();
 
         if(Objects.nonNull(fromDate)) {
@@ -40,7 +40,7 @@ public class BaseTrainingCriteria {
     }
 
     protected void addPredicateWithNeighboringTable(List<Predicate> predicates, String fieldName, String neighborTableFieldName,
-                                                    Object value, HibernateCriteriaBuilder builder, Root<Training> root) {
+                                                    Object value, CriteriaBuilder builder, Root<Training> root) {
         if(Objects.nonNull(value)) {
             if (!(value instanceof String) || StringUtils.isNotEmpty((String) value)) {
                 predicates.add(builder.equal(root.get(fieldName).get(neighborTableFieldName), value));

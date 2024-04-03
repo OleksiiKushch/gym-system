@@ -1,11 +1,11 @@
 package org.example.service.impl;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.IterableUtils;
 import org.example.dao.UserDao;
 import org.example.entity.User;
 import org.example.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Getter
+@RequiredArgsConstructor
 @Service
 public class DefaultUserService implements UserService {
 
@@ -28,9 +29,7 @@ public class DefaultUserService implements UserService {
     @Value("${password.characters.allow}")
     private String passwordAllowedCharacters;
 
-    @Autowired
-    @Qualifier("hibernateUserDao")
-    private UserDao userDao;
+    private final UserDao userDao;
 
     @Override
     public String calculateUsername(User user) {
@@ -60,7 +59,7 @@ public class DefaultUserService implements UserService {
 
     @Override
     public List<User> getAllUsers() {
-        return getUserDao().findAll().stream().toList();
+        return IterableUtils.toList(getUserDao().findAll());
     }
 
     /**
@@ -77,7 +76,7 @@ public class DefaultUserService implements UserService {
 
     @Override
     public void updateUser(User user) {
-        userDao.update(user);
+        userDao.save(user);
     }
 
     private int processSerialNumber(String username, String newUsername) {

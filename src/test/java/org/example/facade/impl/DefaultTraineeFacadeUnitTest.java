@@ -77,6 +77,8 @@ class DefaultTraineeFacadeUnitTest {
     @Mock
     Trainee newTrainee;
     @Mock
+    Trainee updatedTrainee;
+    @Mock
     TraineeDto traineeDto;
     @Mock
     AfterRegistrationResponse afterRegistrationResponse;
@@ -164,7 +166,7 @@ class DefaultTraineeFacadeUnitTest {
 
     @Test
     void shouldGetTraineeProfile() {
-        when(traineeService.getFullTraineeForUsername(TEST_USERNAME)).thenReturn(Optional.of(trainee));
+        when(traineeService.getTraineeForUsername(TEST_USERNAME)).thenReturn(Optional.of(trainee));
         when(modelMapper.map(trainee, TraineeProfileResponse.class)).thenReturn(traineeProfileResponse);
 
         var actualResult = testInstance.getTraineeProfile(TEST_USERNAME);
@@ -174,7 +176,7 @@ class DefaultTraineeFacadeUnitTest {
 
     @Test
     void getTraineeProfile_shouldThrowException_whenTraineeNotExists() {
-        when(traineeService.getFullTraineeForUsername(TEST_USERNAME)).thenReturn(Optional.empty());
+        when(traineeService.getTraineeForUsername(TEST_USERNAME)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(NotFoundException.class, () ->
                 testInstance.getTraineeProfile(TEST_USERNAME));
@@ -213,14 +215,12 @@ class DefaultTraineeFacadeUnitTest {
         when(traineeService.getTraineeForUsername(TEST_USERNAME)).thenReturn(Optional.of(trainee));
         when(modelMapper.map(traineeDto, Trainee.class)).thenReturn(newTrainee);
         prepareNewTrainee();
-        when(trainee.getUsername()).thenReturn(TEST_USERNAME);
-        when(traineeService.getFullTraineeForUsername(TEST_USERNAME)).thenReturn(Optional.of(trainee));
-        when(modelMapper.map(trainee, TraineeProfileResponse.class)).thenReturn(traineeProfileResponse);
+        when(traineeService.updateTrainee(trainee)).thenReturn(updatedTrainee);
+        when(modelMapper.map(updatedTrainee, TraineeProfileResponse.class)).thenReturn(traineeProfileResponse);
 
         TraineeProfileResponse actualResult = testInstance.updateTrainee(TEST_USERNAME, traineeDto);
 
         verifyUpdatedTraineeFields();
-        verify(traineeService).updateTrainee(trainee);
         assertEquals(traineeProfileResponse, actualResult);
     }
 
@@ -236,7 +236,6 @@ class DefaultTraineeFacadeUnitTest {
 
     @Test
     void shouldUpdateTraineeTrainers() {
-        when(traineeService.getTraineeForUsername(TEST_USERNAME)).thenReturn(Optional.of(trainee));
         when(trainerService.getTrainerForUsername(TEST_TRAINER_USERNAME1)).thenReturn(Optional.of(trainer1));
         when(trainerService.getTrainerForUsername(TEST_TRAINER_USERNAME2)).thenReturn(Optional.of(trainer2));
         when(modelMapper.map(trainer1, SimpleTrainerResponse.class)).thenReturn(simpleTrainerResponse1);
@@ -253,7 +252,6 @@ class DefaultTraineeFacadeUnitTest {
 
     @Test
     void updateTraineeTrainers_shouldThrowException_whenAnyOfTrainersNotFound() {
-        when(traineeService.getTraineeForUsername(TEST_USERNAME)).thenReturn(Optional.of(trainee));
         when(trainerService.getTrainerForUsername(TEST_TRAINER_USERNAME1)).thenReturn(Optional.of(trainer1));
         when(trainerService.getTrainerForUsername(TEST_TRAINER_USERNAME2)).thenReturn(Optional.empty());
 
@@ -264,23 +262,13 @@ class DefaultTraineeFacadeUnitTest {
     }
 
     @Test
-    void updateTraineeTrainers_shouldThrowException_whenTraineeNotFound() {
-        when(traineeService.getTraineeForUsername(TEST_USERNAME)).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(NotFoundException.class, () ->
-                testInstance.updateTraineeTrainers(TEST_USERNAME, List.of(TEST_TRAINER_USERNAME1, TEST_TRAINER_USERNAME2)));
-
-        assertEquals(TRAINEE_NOT_FOUND_EXPECTED_EXCEPTION_MSG, exception.getMessage());
-    }
-
-    @Test
     void shouldDeleteTrainee() {
         doReturn(Optional.of(trainee)).when(traineeService).getTraineeForUsername(TEST_USERNAME);
         doReturn(false).when(trainee).isActive();
 
         testInstance.deleteTrainee(TEST_USERNAME);
 
-        verify(traineeService).deleteTraineeForUsername(TEST_USERNAME);
+        verify(traineeService).deleteTrainee(trainee);
     }
 
     @Test

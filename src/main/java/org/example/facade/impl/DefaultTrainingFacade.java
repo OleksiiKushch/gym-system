@@ -30,10 +30,10 @@ public class DefaultTrainingFacade implements TrainingFacade {
     @Override
     public void createTraining(TrainingDto trainingDto) {
         String traineeUsername = trainingDto.getTraineeUsername();
-        Trainee trainee = getTraineeService().getFullTraineeForUsername(traineeUsername)
+        Trainee trainee = getTraineeService().getTraineeForUsername(traineeUsername)
                 .orElseThrow(() -> new AppException(formExceptionMessage(TRAINEE_NOT_FOUND_EXCEPTION_MSG, traineeUsername)));
         String trainerUsername = trainingDto.getTrainerUsername();
-        Trainer trainer = getTrainerService().getFullTrainerForUsername(trainerUsername)
+        Trainer trainer = getTrainerService().getTrainerForUsername(trainerUsername)
                 .orElseThrow(() -> new AppException(formExceptionMessage(TRAINER_NOT_FOUND_EXCEPTION_MSG, trainerUsername)));
         Training training = getModelMapper().map(trainingDto, Training.class);
         training.setTrainee(trainee);

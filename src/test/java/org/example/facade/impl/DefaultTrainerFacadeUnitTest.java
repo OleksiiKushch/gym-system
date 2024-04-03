@@ -74,8 +74,6 @@ class DefaultTrainerFacadeUnitTest {
     AfterRegistrationResponse afterRegistrationResponse;
     @Mock
     TrainerProfileResponse trainerProfileResponse;
-    @Mock
-    List<SimpleTrainerResponse> simpleTrainerResponseList;
 
     @Mock
     Trainer trainer1;
@@ -160,7 +158,7 @@ class DefaultTrainerFacadeUnitTest {
 
     @Test
     void shouldGetTrainerProfile() {
-        when(trainerService.getFullTrainerForUsername(TEST_USERNAME)).thenReturn(Optional.of(trainer));
+        when(trainerService.getTrainerForUsername(TEST_USERNAME)).thenReturn(Optional.of(trainer));
         when(modelMapper.map(trainer, TrainerProfileResponse.class)).thenReturn(trainerProfileResponse);
 
         TrainerProfileResponse actualResult = testInstance.getTrainerProfile(TEST_USERNAME);
@@ -170,7 +168,7 @@ class DefaultTrainerFacadeUnitTest {
 
     @Test
     void getTrainerProfile_shouldThrowException_whenTraineeNotFound() {
-        when(trainerService.getFullTrainerForUsername(TEST_USERNAME)).thenReturn(Optional.empty());
+        when(trainerService.getTrainerForUsername(TEST_USERNAME)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(NotFoundException.class, () ->
                 testInstance.getTrainerProfile(TEST_USERNAME));
@@ -234,7 +232,7 @@ class DefaultTrainerFacadeUnitTest {
         when(modelMapper.map(trainerDto, Trainer.class)).thenReturn(newTrainer);
         prepareNewTrainer();
         when(trainer.getUsername()).thenReturn(TEST_USERNAME);
-        when(trainerService.getFullTrainerForUsername(TEST_USERNAME)).thenReturn(Optional.of(trainer));
+        when(trainerService.getTrainerForUsername(TEST_USERNAME)).thenReturn(Optional.of(trainer));
         when(modelMapper.map(trainer, TrainerProfileResponse.class)).thenReturn(trainerProfileResponse);
 
         TrainerProfileResponse actualResult = testInstance.updateTrainer(TEST_USERNAME, trainerDto);

@@ -1,0 +1,22 @@
+spring:
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3307/gymsystem_stage
+    username: root
+    password: toor
+    hikari:
+      maximum-pool-size: 10
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+  liquibase:
+    change-log: classpath:db/changelog/prod-changelog.yaml

@@ -9,11 +9,8 @@ import java.util.Optional;
 public interface TraineeService {
 
     void createTrainee(Trainee trainee);
-    void updateTrainee(Trainee trainee);
+    Trainee updateTrainee(Trainee trainee);
     void deleteTrainee(Trainee trainee);
-    void deleteTraineeForUsername(String username);
-    Optional<Trainee> getTraineeForId(Integer id);
     Optional<Trainee> getTraineeForUsername(String username);
-    Optional<Trainee> getFullTraineeForUsername(String username);
     void updateTrainersList(String username, List<Trainer> newTrainers);
 }

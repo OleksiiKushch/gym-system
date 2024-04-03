@@ -34,14 +34,14 @@ class DefaultTrainerServiceUnitTest {
     void shouldCreateTrainer() {
         testInstance.createTrainer(trainer);
 
-        verify(trainerDao).insert(trainer);
+        verify(trainerDao).save(trainer);
     }
 
     @Test
     void shouldUpdateTrainer() {
         testInstance.updateTrainer(trainer);
 
-        verify(trainerDao).update(trainer);
+        verify(trainerDao).save(trainer);
     }
 
     @Test
@@ -59,16 +59,6 @@ class DefaultTrainerServiceUnitTest {
         when(trainerDao.findByUsername(USERNAME)).thenReturn(Optional.of(trainer));
 
         Optional<Trainer> actualResult = testInstance.getTrainerForUsername(USERNAME);
-
-        assertTrue(actualResult.isPresent());
-        assertEquals(trainer, actualResult.get());
-    }
-
-    @Test
-    void shouldGetFullTrainerForUsername() {
-        when(trainerDao.findWithTrainingsByUsername(USERNAME)).thenReturn(Optional.of(trainer));
-
-        Optional<Trainer> actualResult = testInstance.getFullTrainerForUsername(USERNAME);
 
         assertTrue(actualResult.isPresent());
         assertEquals(trainer, actualResult.get());

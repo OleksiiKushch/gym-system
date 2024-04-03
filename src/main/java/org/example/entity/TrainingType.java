@@ -7,34 +7,22 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import static org.example.constants.PersistenceLayerConstants.FIND_ALL_TRAINING_TYPES_QUERY_NAME;
-import static org.example.constants.PersistenceLayerConstants.FIND_TRAINING_TYPE_BY_NAME_QUERY_NAME;
-
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@NamedQuery(
-        name = FIND_TRAINING_TYPE_BY_NAME_QUERY_NAME,
-        query = "FROM TrainingType WHERE name = :trainingType"
-)
-@NamedQuery(
-        name = FIND_ALL_TRAINING_TYPES_QUERY_NAME,
-        query = "FROM TrainingType"
-)
 @Entity
-@Table(name = "training_type")
+@Table(name = "training_types")
 public class TrainingType {
 
-    @EqualsAndHashCode.Exclude
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

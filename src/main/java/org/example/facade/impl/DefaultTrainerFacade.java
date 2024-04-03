@@ -43,7 +43,7 @@ public class DefaultTrainerFacade extends DefaultUserFacade implements TrainerFa
 
     @Override
     public TrainerProfileResponse getTrainerProfile(String username) {
-        return getTrainerService().getFullTrainerForUsername(username)
+        return getTrainerService().getTrainerForUsername(username)
                 .map(trainer -> getModelMapper().map(trainer, TrainerProfileResponse.class))
                 .orElseThrow(() -> new NotFoundException(formExceptionMessage(TRAINER_NOT_FOUND_EXCEPTION_MSG, username)));
     }

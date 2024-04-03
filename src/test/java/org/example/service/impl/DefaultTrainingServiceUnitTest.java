@@ -2,6 +2,7 @@ package org.example.service.impl;
 
 import org.example.dao.TraineeDao;
 import org.example.dao.TrainingDao;
+import org.example.dao.TrainingSearchDao;
 import org.example.entity.Trainee;
 import org.example.entity.Trainer;
 import org.example.entity.Training;
@@ -34,6 +35,8 @@ class DefaultTrainingServiceUnitTest {
     @Mock
     TrainingDao trainingDao;
     @Mock
+    TrainingSearchDao trainingSearchDao;
+    @Mock
     TraineeDao traineeDao;
 
     @Mock
@@ -56,8 +59,8 @@ class DefaultTrainingServiceUnitTest {
         testInstance.createTraining(training);
 
         verify(trainee).addTrainer(trainer);
-        verify(traineeDao).update(trainee);
-        verify(trainingDao).insert(training);
+        verify(traineeDao).save(trainee);
+        verify(trainingDao).save(training);
     }
 
     @Test
@@ -69,13 +72,13 @@ class DefaultTrainingServiceUnitTest {
         testInstance.createTraining(training);
 
         verify(trainee, never()).addTrainer(trainer);
-        verify(traineeDao, never()).update(trainee);
-        verify(trainingDao).insert(training);
+        verify(traineeDao, never()).save(trainee);
+        verify(trainingDao).save(training);
     }
     
     @Test
     void shouldGetTrainingForName() {
-        when(trainingDao.findByName(TRAINING_NAME)).thenReturn(Optional.of(training));
+        when(trainingDao.findByTrainingName(TRAINING_NAME)).thenReturn(Optional.of(training));
 
         Optional<Training> actualResult = testInstance.getTrainingForName(TRAINING_NAME);
 
@@ -87,13 +90,13 @@ class DefaultTrainingServiceUnitTest {
     void shouldGetTraineeTrainings() {
         testInstance.getTraineeTrainings(traineeTrainingsCriteria);
 
-        verify(trainingDao).findTraineeTrainingsByCriteria(traineeTrainingsCriteria);
+        verify(trainingSearchDao).findTraineeTrainingsByCriteria(traineeTrainingsCriteria);
     }
 
     @Test
     void shouldGetTrainerTrainings() {
         testInstance.getTrainerTrainings(trainerTrainingsCriteria);
 
-        verify(trainingDao).findTrainerTrainingsByCriteria(trainerTrainingsCriteria);
+        verify(trainingSearchDao).findTrainerTrainingsByCriteria(trainerTrainingsCriteria);
     }
 }

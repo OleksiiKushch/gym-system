@@ -55,9 +55,9 @@ class DefaultTrainingFacadeUnitTest {
     @Test
     void shouldCreateTraining() {
         when(trainingDto.getTraineeUsername()).thenReturn(TRAINEE_USERNAME);
-        when(traineeService.getFullTraineeForUsername(TRAINEE_USERNAME)).thenReturn(Optional.of(trainee));
+        when(traineeService.getTraineeForUsername(TRAINEE_USERNAME)).thenReturn(Optional.of(trainee));
         when(trainingDto.getTrainerUsername()).thenReturn(TRAINER_USERNAME);
-        when(trainerService.getFullTrainerForUsername(TRAINER_USERNAME)).thenReturn(Optional.of(trainer));
+        when(trainerService.getTrainerForUsername(TRAINER_USERNAME)).thenReturn(Optional.of(trainer));
         when(modelMapper.map(trainingDto, Training.class)).thenReturn(training);
 
         testInstance.createTraining(trainingDto);
@@ -70,7 +70,7 @@ class DefaultTrainingFacadeUnitTest {
     @Test
     void createTraining_shouldThrowException_whenTraineeNotFound() {
         when(trainingDto.getTraineeUsername()).thenReturn(TRAINEE_USERNAME);
-        when(traineeService.getFullTraineeForUsername(TRAINEE_USERNAME)).thenReturn(Optional.empty());
+        when(traineeService.getTraineeForUsername(TRAINEE_USERNAME)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(AppException.class, () ->
                 testInstance.createTraining(trainingDto));
@@ -81,9 +81,9 @@ class DefaultTrainingFacadeUnitTest {
     @Test
     void createTraining_shouldThrowException_whenTrainerNotFound() {
         when(trainingDto.getTraineeUsername()).thenReturn(TRAINEE_USERNAME);
-        when(traineeService.getFullTraineeForUsername(TRAINEE_USERNAME)).thenReturn(Optional.of(trainee));
+        when(traineeService.getTraineeForUsername(TRAINEE_USERNAME)).thenReturn(Optional.of(trainee));
         when(trainingDto.getTrainerUsername()).thenReturn(TRAINER_USERNAME);
-        when(trainerService.getFullTrainerForUsername(TRAINER_USERNAME)).thenReturn(Optional.empty());
+        when(trainerService.getTrainerForUsername(TRAINER_USERNAME)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(AppException.class, () ->
                 testInstance.createTraining(trainingDto));

@@ -1,5 +1,6 @@
 package org.example.entity.search;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
@@ -8,7 +9,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.example.entity.Training;
-import org.hibernate.query.criteria.HibernateCriteriaBuilder;
 
 import java.util.List;
 
@@ -28,8 +28,8 @@ public class TrainerTrainingsCriteria extends BaseTrainingCriteria {
     private String traineeFirstName;
 
     @Override
-    public List<Predicate> formPredicatesForHibernateCriteria(HibernateCriteriaBuilder builder, Root<Training> root) {
-        List<Predicate> predicates = super.formPredicatesForHibernateCriteria(builder, root);
+    public List<Predicate> formPredicatesForJpaCriteria(CriteriaBuilder builder, Root<Training> root) {
+        List<Predicate> predicates = super.formPredicatesForJpaCriteria(builder, root);
 
         addPredicateWithNeighboringTable(predicates, TRAININER_FIELD_NAME, USERNAME_FIELD_NAME, trainerUsername, builder, root);
         addPredicateWithNeighboringTable(predicates, TRAININEE_FIELD_NAME, FIRST_NAME_FIELD_NAME, traineeFirstName, builder, root);

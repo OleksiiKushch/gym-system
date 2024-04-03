@@ -1,17 +1,11 @@
 package org.example.dao;
 
 import org.example.entity.Training;
-import org.example.entity.search.TraineeTrainingsCriteria;
-import org.example.entity.search.TrainerTrainingsCriteria;
+import org.springframework.data.repository.CrudRepository;
 
-import java.util.Collection;
 import java.util.Optional;
 
-public interface TrainingDao {
+public interface TrainingDao extends CrudRepository<Training, Integer> {
 
-    void insert(Training training);
-    void update(Training training);
-    Optional<Training> findByName(String name);
-    Collection<Training> findTraineeTrainingsByCriteria(TraineeTrainingsCriteria criteria);
-    Collection<Training> findTrainerTrainingsByCriteria(TrainerTrainingsCriteria criteria);
+    Optional<Training> findByTrainingName(String trainingName);
 }
