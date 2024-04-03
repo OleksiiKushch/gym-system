@@ -49,9 +49,11 @@ public class HibernateTraineeDao extends HibernateAbstractUserDao<Trainee> imple
     }
 
     @Override
-    public void updateTrainersList(Integer id, Collection<Trainer> newTrainers) {
+    public void updateTrainersList(String username, Collection<Trainer> newTrainers) {
         getSessionFactory().inTransaction(session -> {
-            Trainee trainee = session.get(Trainee.class, id);
+            Trainee trainee = session.createNamedQuery(FIND_TRAINEE_BY_USERNAME_QUERY_NAME, Trainee.class)
+                    .setParameter(USERNAME_PARAM, username)
+                    .getSingleResult();
             trainee.getTrainers().clear();
             trainee.getTrainers().addAll(newTrainers);
             session.merge(trainee);

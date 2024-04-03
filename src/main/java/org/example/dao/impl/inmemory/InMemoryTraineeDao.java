@@ -33,7 +33,7 @@ public class InMemoryTraineeDao extends InMemoryAbstractUserDao<Trainee> impleme
     }
 
     @Override
-    public void updateTrainersList(Integer id, Collection<Trainer> newTrainers) {
+    public void updateTrainersList(String username, Collection<Trainer> newTrainers) {
         throw new UnsupportedOperationException();
     }
 

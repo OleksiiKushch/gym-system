@@ -56,7 +56,7 @@ public class DefaultTraineeService implements TraineeService {
     }
 
     @Override
-    public void updateTrainersList(Integer id, List<Trainer> newTrainers) {
-        getTraineeDao().updateTrainersList(id, newTrainers);
+    public void updateTrainersList(String username, List<Trainer> newTrainers) {
+        getTraineeDao().updateTrainersList(username, newTrainers);
     }
 }

@@ -32,7 +32,8 @@ public abstract class HibernateAbstractUserDao<T extends User> {
 
     protected Collection<T> findAll(String queryName, Class<T> type) {
         return getSessionFactory().fromSession(session ->
-                session.createNamedQuery(queryName, type).getResultList()
+                session.createNamedQuery(queryName, type)
+                        .getResultList()
         );
     }
 

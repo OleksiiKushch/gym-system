@@ -15,6 +15,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import static org.example.constants.PersistenceLayerConstants.FIND_ALL_TRAINING_TYPES_QUERY_NAME;
 import static org.example.constants.PersistenceLayerConstants.FIND_TRAINING_TYPE_BY_NAME_QUERY_NAME;
 
 @Data
@@ -24,6 +25,10 @@ import static org.example.constants.PersistenceLayerConstants.FIND_TRAINING_TYPE
 @NamedQuery(
         name = FIND_TRAINING_TYPE_BY_NAME_QUERY_NAME,
         query = "FROM TrainingType WHERE name = :trainingType"
+)
+@NamedQuery(
+        name = FIND_ALL_TRAINING_TYPES_QUERY_NAME,
+        query = "FROM TrainingType"
 )
 @Entity
 @Table(name = "training_type")

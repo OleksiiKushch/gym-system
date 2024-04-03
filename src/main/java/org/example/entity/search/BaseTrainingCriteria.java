@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.example.entity.Training;
 import org.hibernate.query.criteria.HibernateCriteriaBuilder;
 
@@ -41,7 +42,9 @@ public class BaseTrainingCriteria {
     protected void addPredicateWithNeighboringTable(List<Predicate> predicates, String fieldName, String neighborTableFieldName,
                                                     Object value, HibernateCriteriaBuilder builder, Root<Training> root) {
         if(Objects.nonNull(value)) {
-            predicates.add(builder.equal(root.get(fieldName).get(neighborTableFieldName), value));
+            if (!(value instanceof String) || StringUtils.isNotEmpty((String) value)) {
+                predicates.add(builder.equal(root.get(fieldName).get(neighborTableFieldName), value));
+            }
         }
     }
 }

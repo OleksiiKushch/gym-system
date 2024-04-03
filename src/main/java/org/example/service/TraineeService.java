@@ -15,5 +15,5 @@ public interface TraineeService {
     Optional<Trainee> getTraineeForId(Integer id);
     Optional<Trainee> getTraineeForUsername(String username);
     Optional<Trainee> getFullTraineeForUsername(String username);
-    void updateTrainersList(Integer id, List<Trainer> newTrainers);
+    void updateTrainersList(String username, List<Trainer> newTrainers);
 }

@@ -89,9 +89,9 @@ class DefaultTraineeServiceUnitTest {
 
     @Test
     void shouldUpdateTrainersList() {
-        testInstance.updateTrainersList(ID, trainerList);
+        testInstance.updateTrainersList(USERNAME, trainerList);
 
-        verify(traineeDao).updateTrainersList(ID, trainerList);
+        verify(traineeDao).updateTrainersList(USERNAME, trainerList);
     }
 
     @Test

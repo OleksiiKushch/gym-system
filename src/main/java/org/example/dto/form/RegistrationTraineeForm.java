@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.validation.StringLocalDate;
 
 import static org.example.constants.GeneralConstants.PASSWORD_PLACEHOLDER;
 
@@ -18,6 +19,7 @@ public class RegistrationTraineeForm {
     private String lastName;
     private String password;
     private String confirmPassword;
+    @StringLocalDate
     private String dateOfBirthday;
     private String address;
 
