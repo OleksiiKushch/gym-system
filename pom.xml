@@ -13,13 +13,21 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>6.1.3</spring.version>
+        <aspectj.version>1.9.21.1</aspectj.version>
+        <jakarta.annotation.version>3.0.0-M1</jakarta.annotation.version>
+        <hibernate.validator.version>8.0.1.Final</hibernate.validator.version>
+        <glassfish.version>5.0.0</glassfish.version>
         <lombok.version>1.18.30</lombok.version>
         <slf4j.version>2.0.11</slf4j.version>
         <logback.version>1.4.14</logback.version>
         <junit.version>5.10.2</junit.version>
         <mockito.junit.version>5.7.0</mockito.junit.version>
+        <hibernate.version>6.4.4.Final</hibernate.version>
+        <mysql.connector.version>8.3.0</mysql.connector.version>
+        <modelmapper.version>3.2.0</modelmapper.version>
         <commons.csv.version>1.10.0</commons.csv.version>
         <commons.lang.version>3.14.0</commons.lang.version>
+        <commons.validator.version>1.8.0</commons.validator.version>
     </properties>
 
     <dependencies>
@@ -27,6 +35,32 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>${jakarta.annotation.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate.validator.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.expressly</groupId>
+            <artifactId>expressly</artifactId>
+            <version>${glassfish.version}</version>
         </dependency>
 
         <dependency>
@@ -63,6 +97,23 @@
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>${mysql.connector.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>${modelmapper.version}</version>
         </dependency>
 
         <dependency>

@@ -7,6 +7,7 @@ import org.example.entity.Trainee;
 import org.example.entity.Trainer;
 import org.example.entity.Training;
 import org.example.entity.TrainingType;
+import org.example.entity.TrainingTypeEnum;
 import org.example.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -72,10 +73,6 @@ public class StoragesPostProcessorUnitTest {
     Training expectingTraining1;
     @Spy
     Training expectingTraining2;
-    @Spy
-    TrainingType expectedTrainingType1;
-    @Spy
-    TrainingType expectedTrainingType2;
 
     @BeforeEach
     void setUp() {
@@ -146,8 +143,8 @@ public class StoragesPostProcessorUnitTest {
 
     void checkTrainingInStorage(String name, Training expectedTraining) {
         Training actualTraining = trainingStorage.get(name);
-        assertEquals(expectedTraining.getTraineeId(), actualTraining.getTraineeId());
-        assertEquals(expectedTraining.getTrainerId(), actualTraining.getTrainerId());
+        assertEquals(expectedTraining.getTrainee().getUserId(), actualTraining.getTrainee().getUserId());
+        assertEquals(expectedTraining.getTrainer().getUserId(), actualTraining.getTrainer().getUserId());
         assertEquals(expectedTraining.getTrainingName(), actualTraining.getTrainingName());
         assertEquals(expectedTraining.getTrainingType(), actualTraining.getTrainingType());
         assertEquals(expectedTraining.getTrainingDate(), actualTraining.getTrainingDate());
@@ -197,7 +194,7 @@ public class StoragesPostProcessorUnitTest {
                 .username("John.Doe1")
                 .password("password")
                 .isActive(true)
-                .specialization("CARDIO")
+                .specialization(TrainingType.builder().name(TrainingTypeEnum.CARDIO).build())
                 .build();
         expectedTrainer2 = Trainer.builder()
                 .userId(TEST_USER_ID_2)
@@ -206,26 +203,24 @@ public class StoragesPostProcessorUnitTest {
                 .username("Jane.Doe1")
                 .password("password")
                 .isActive(true)
-                .specialization("STRENGTH")
+                .specialization(TrainingType.builder().name(TrainingTypeEnum.STRENGTH).build())
                 .build();
     }
 
     void prepareTrainingVerificationDate() {
-        expectedTrainingType1 = new TrainingType("CARDIO");
         expectingTraining1 = Training.builder()
-                .traineeId(TEST_USER_ID_1)
-                .trainerId(TEST_USER_ID_1)
+                .trainee(Trainee.builder().userId(TEST_USER_ID_1).build())
+                .trainer(Trainer.builder().userId(TEST_USER_ID_1).build())
                 .trainingName(TRAINING_NAME_1)
-                .trainingType(expectedTrainingType1)
+                .trainingType(TrainingType.builder().name(TrainingTypeEnum.CARDIO).build())
                 .trainingDate(LocalDate.parse("2022-01-01"))
                 .trainingDuration(60)
                 .build();
-        expectedTrainingType2 = new TrainingType("STRENGTH");
         expectingTraining2 = Training.builder()
-                .traineeId(TEST_USER_ID_2)
-                .trainerId(TEST_USER_ID_2)
+                .trainee(Trainee.builder().userId(TEST_USER_ID_2).build())
+                .trainer(Trainer.builder().userId(TEST_USER_ID_2).build())
                 .trainingName(TRAINING_NAME_2)
-                .trainingType(expectedTrainingType2)
+                .trainingType(TrainingType.builder().name(TrainingTypeEnum.STRENGTH).build())
                 .trainingDate(LocalDate.parse("2022-01-02"))
                 .trainingDuration(45)
                 .build();

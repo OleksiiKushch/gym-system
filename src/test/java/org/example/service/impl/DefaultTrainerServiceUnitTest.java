@@ -19,6 +19,7 @@ import static org.mockito.Mockito.when;
 class DefaultTrainerServiceUnitTest {
 
     private static final int ID = 1;
+    private static final String USERNAME = "John.Doe";
 
     @InjectMocks
     DefaultTrainerService testInstance;
@@ -51,5 +52,32 @@ class DefaultTrainerServiceUnitTest {
 
         assertTrue(actualResult.isPresent());
         assertEquals(trainer, actualResult.get());
+    }
+
+    @Test
+    void shouldGetTrainerForUsername() {
+        when(trainerDao.findByUsername(USERNAME)).thenReturn(Optional.of(trainer));
+
+        Optional<Trainer> actualResult = testInstance.getTrainerForUsername(USERNAME);
+
+        assertTrue(actualResult.isPresent());
+        assertEquals(trainer, actualResult.get());
+    }
+
+    @Test
+    void shouldGetFullTrainerForUsername() {
+        when(trainerDao.findWithTrainingsByUsername(USERNAME)).thenReturn(Optional.of(trainer));
+
+        Optional<Trainer> actualResult = testInstance.getFullTrainerForUsername(USERNAME);
+
+        assertTrue(actualResult.isPresent());
+        assertEquals(trainer, actualResult.get());
+    }
+
+    @Test
+    void shouldGetAllTrainersThatNotAssignedOnTrainee() {
+        testInstance.getAllTrainersThatNotAssignedOnTrainee(USERNAME);
+
+        verify(trainerDao).findAllThatNotAssignedOnTrainee(USERNAME);
     }
 }

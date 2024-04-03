@@ -19,7 +19,7 @@ class TrainerUnitTest {
     private static final String TEST_USERNAME = "John.Doe";
     private static final String TEST_PASSWORD = "password";
     private static final String TEST_IS_ACTIVE = "true";
-    private static final String TEST_SPECIALIZATION = "specialization";
+    private static final String TEST_SPECIALIZATION = TrainingTypeEnum.CARDIO.name();
 
     @Spy
     Trainer testInstance;
@@ -45,6 +45,6 @@ class TrainerUnitTest {
         assertEquals(TEST_USERNAME, testInstance.getUsername());
         assertEquals(TEST_PASSWORD, testInstance.getPassword());
         assertEquals(TEST_IS_ACTIVE, String.valueOf(testInstance.isActive()));
-        assertEquals(TEST_SPECIALIZATION, testInstance.getSpecialization());
+        assertEquals(TEST_SPECIALIZATION, testInstance.getSpecialization().getName().name());
     }
 }

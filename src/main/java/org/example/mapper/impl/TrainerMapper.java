@@ -1,5 +1,6 @@
 package org.example.mapper.impl;
 
+import lombok.Getter;
 import org.example.dto.TrainerDto;
 import org.example.entity.Trainer;
 import org.example.mapper.Mapper;
@@ -7,8 +8,15 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+@Getter
 @Component
 public class TrainerMapper implements Mapper<TrainerDto, Trainer> {
+
+    private final TrainingTypeMapper trainingTypeMapper;
+
+    public TrainerMapper(TrainingTypeMapper trainingTypeMapper) {
+        this.trainingTypeMapper = trainingTypeMapper;
+    }
 
     @Override
     public Trainer map(TrainerDto source) {
@@ -18,7 +26,7 @@ public class TrainerMapper implements Mapper<TrainerDto, Trainer> {
                         .firstName(dto.getFirstName())
                         .lastName(dto.getLastName())
                         .password(dto.getPassword())
-                        .specialization(dto.getSpecialization())
+                        .specialization(getTrainingTypeMapper().map(dto.getSpecialization()))
                         .build())
                 .orElseGet(Trainer::new);
     }
