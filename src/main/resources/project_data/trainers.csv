@@ -1,0 +1,11 @@
+userId,firstName,lastName,username,password,isActive,specialization
+1,John,Doe,John.Doe1,password1,true,CARDIO
+2,Jane,Doe,Jane.Doe1,password2,true,STRENGTH
+3,Jim,Smith,Jim.Smith1,password3,true,BOXING
+4,Jill,Smith,Jill.Smith1,password4,true,YOGA
+5,Joe,Brown,Joe.Brown1,password5,true,CARDIO
+6,Jessica,White,Jessica.White1,password6,true,STRENGTH
+7,Jack,Green,Jack.Green1,password7,true,BOXING
+8,Jennifer,Black,Jennifer.Black1,password8,true,YOGA
+9,Jason,Yellow,Jason.Yellow1,password9,true,CARDIO
+10,Jasmine,Purple,Jasmine.Purple1,password10,true,STRENGTH

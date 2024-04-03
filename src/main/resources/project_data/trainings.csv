@@ -1,0 +1,11 @@
+traineeId,trainerId,trainingName,trainingType,trainingDate,trainingDuration
+1,1,Training1,CARDIO,2022-01-01,60
+2,2,Training2,STRENGTH,2022-01-02,45
+3,3,Training3,BOXING,2022-01-03,30
+4,4,Training4,YOGA,2022-01-04,90
+5,5,Training5,CARDIO,2022-01-05,60
+1,6,Training6,STRENGTH,2022-01-06,45
+2,7,Training7,BOXING,2022-01-07,30
+3,8,Training8,YOGA,2022-01-08,90
+4,9,Training9,CARDIO,2022-01-09,60
+5,10,Training10,STRENGTH,2022-01-10,45
