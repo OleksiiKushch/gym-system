@@ -1,0 +1,21 @@
+<configuration>
+    <property name="PATH_TO_LOG_FILE" value="./log/gym-app.log"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%kvp- %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE_LOG" class="ch.qos.logback.core.FileAppender">
+        <file>${PATH_TO_LOG_FILE}</file>
+        <encoder>
+            <pattern>%date %level [%thread] %logger{10} [%file:%line] -%kvp- %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE_LOG"/>
+    </root>
+</configuration>
