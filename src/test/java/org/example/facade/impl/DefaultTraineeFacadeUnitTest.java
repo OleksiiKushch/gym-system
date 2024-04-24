@@ -14,6 +14,7 @@ import org.example.exception.AppException;
 import org.example.exception.NotFoundException;
 import org.example.service.TraineeService;
 import org.example.service.TrainerService;
+import org.example.service.TrainerWorkloadService;
 import org.example.service.TrainingService;
 import org.example.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,6 +75,8 @@ class DefaultTraineeFacadeUnitTest {
     ModelMapper modelMapper;
     @Mock
     PasswordEncoder passwordEncoder;
+    @Mock
+    TrainerWorkloadService trainerWorkloadService;
 
     @Mock
     Trainee trainee;

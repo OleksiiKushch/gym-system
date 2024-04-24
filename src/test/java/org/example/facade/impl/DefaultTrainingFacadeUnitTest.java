@@ -1,12 +1,15 @@
 package org.example.facade.impl;
 
+import org.example.dto.ActionType;
 import org.example.dto.TrainingDto;
+import org.example.dto.request.TrainerWorkloadRequest;
 import org.example.entity.Trainee;
 import org.example.entity.Trainer;
 import org.example.entity.Training;
 import org.example.exception.AppException;
 import org.example.service.TraineeService;
 import org.example.service.TrainerService;
+import org.example.service.TrainerWorkloadService;
 import org.example.service.TrainingService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,6 +45,8 @@ class DefaultTrainingFacadeUnitTest {
     TrainerService trainerService;
     @Mock
     ModelMapper modelMapper;
+    @Mock
+    TrainerWorkloadService trainerWorkloadService;
 
     @Mock
     TrainingDto trainingDto;
@@ -51,6 +56,8 @@ class DefaultTrainingFacadeUnitTest {
     Trainer trainer;
     @Mock
     Training training;
+    @Mock
+    TrainerWorkloadRequest trainerWorkloadRequest;
 
     @Test
     void shouldCreateTraining() {
@@ -59,12 +66,14 @@ class DefaultTrainingFacadeUnitTest {
         when(trainingDto.getTrainerUsername()).thenReturn(TRAINER_USERNAME);
         when(trainerService.getTrainerForUsername(TRAINER_USERNAME)).thenReturn(Optional.of(trainer));
         when(modelMapper.map(trainingDto, Training.class)).thenReturn(training);
+        when(modelMapper.map(training, TrainerWorkloadRequest.class)).thenReturn(trainerWorkloadRequest);
 
         testInstance.createTraining(trainingDto);
 
         verify(training).setTrainee(trainee);
         verify(training).setTrainer(trainer);
         verify(trainingService).createTraining(training);
+        verify(trainerWorkloadRequest).setActionType(ActionType.ADD);
     }
 
     @Test

@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.config.security.JwtAuthenticationDetails;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,17 +48,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String jwt = getJwtAuthenticationHelper().extractTokenFromHeader(authHeader);
             Optional<UserDetails> userDetailsOptional = getJwtManager().isTokenValid(jwt);
             if (userDetailsOptional.isPresent()) {
-                SecurityContextHolder.getContext().setAuthentication(prepareAuthToken(userDetailsOptional.get(), request));
+                SecurityContextHolder.getContext().setAuthentication(prepareAuthToken(userDetailsOptional.get(), jwt, request));
                 registerAuthorizedRequest(jwt);
             }
         }
         filterChain.doFilter(request, response);
     }
 
-    private UsernamePasswordAuthenticationToken prepareAuthToken(UserDetails userDetails, HttpServletRequest request) {
+    private UsernamePasswordAuthenticationToken prepareAuthToken(UserDetails userDetails, String jwt, HttpServletRequest request) {
         var authToken = new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails.getAuthorities());
-        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        authToken.setDetails(new JwtAuthenticationDetails(jwt, new WebAuthenticationDetailsSource().buildDetails(request)));
         return authToken;
     }
 

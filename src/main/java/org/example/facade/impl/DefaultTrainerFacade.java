@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.dto.TrainerDto;
 import org.example.dto.form.search.SearchTrainerTrainingsPayload;
 import org.example.dto.response.AfterRegistrationResponse;
+import org.example.dto.response.ReportResponse;
 import org.example.dto.response.SimpleTrainerResponse;
 import org.example.dto.response.TrainerProfileResponse;
 import org.example.dto.response.TrainerTrainingResponse;
@@ -14,11 +15,15 @@ import org.example.exception.NotFoundException;
 import org.example.facade.TrainerFacade;
 import org.example.service.TraineeService;
 import org.example.service.TrainerService;
+import org.example.service.TrainerWorkloadService;
 import org.example.service.TrainingService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.time.Month;
+import java.time.Year;
 import java.util.List;
+import java.util.Map;
 
 import static org.example.constants.GeneralConstants.TRAINEE_NOT_FOUND_EXCEPTION_MSG;
 import static org.example.constants.GeneralConstants.TRAINER_NOT_FOUND_EXCEPTION_MSG;
@@ -32,6 +37,7 @@ public class DefaultTrainerFacade extends DefaultUserFacade implements TrainerFa
     private final TraineeService traineeService;
     private final TrainingService trainingService;
     private final ModelMapper modelMapper;
+    private final TrainerWorkloadService trainerWorkloadService;
 
     @Override
     public AfterRegistrationResponse registerTrainer(TrainerDto trainerDto) {
@@ -73,6 +79,15 @@ public class DefaultTrainerFacade extends DefaultUserFacade implements TrainerFa
         setUpdatedFieldsForTrainer(actualTrainer, newTrainer);
         getTrainerService().updateTrainer(actualTrainer);
         return getTrainerProfile(actualTrainer.getUsername());
+    }
+
+    @Override
+    public ReportResponse formTrainerTotalHoursReport(String username) {
+        Trainer actualTrainer = getTrainerByUsernameOrThrowException(username);
+        Map<Year, Map<Month, Integer>> history = getTrainerWorkloadService().getTrainerTotalHoursReport(username);
+        ReportResponse result = getModelMapper().map(actualTrainer, ReportResponse.class);
+        result.setHistory(history);
+        return result;
     }
 
     private void setUpdatedFieldsForTrainer(Trainer currentTrainer, Trainer newTrainer) {
