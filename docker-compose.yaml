@@ -6,6 +6,19 @@ volumes:
 
 services:
 
+  activemq:
+    image: webcenter/activemq:latest
+    ports:
+      - "8161:8161"
+      - "61616:61616"
+      - "61613:61613"
+    environment:
+      ACTIVEMQ_REMOVE_DEFAULT_ACCOUNT: "true"
+      ACTIVEMQ_ADMIN_LOGIN: "admin"
+      ACTIVEMQ_ADMIN_PASSWORD: "admin"
+      ACTIVEMQ_MIN_MEMORY: "512"
+      ACTIVEMQ_MAX_MEMORY: "2048"
+
   db:
     image: mysql:8.3.0
     container_name: database

@@ -10,7 +10,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -20,7 +19,7 @@ import static org.example.constants.GeneralConstants.SOME_SERVICE_IS_UNEVAILABLE
 @Getter
 @RequiredArgsConstructor
 @Aspect
-@Component
+//@Component
 public class CircuitBreakerAspect {
 
     private static final int FIRST = 0;

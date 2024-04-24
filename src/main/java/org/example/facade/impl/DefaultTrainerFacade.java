@@ -1,7 +1,6 @@
 package org.example.facade.impl;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.example.dto.TrainerDto;
 import org.example.dto.form.search.SearchTrainerTrainingsPayload;
 import org.example.dto.response.AfterRegistrationResponse;
@@ -18,6 +17,8 @@ import org.example.service.TrainerService;
 import org.example.service.TrainerWorkloadService;
 import org.example.service.TrainingService;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.time.Month;
@@ -29,15 +30,14 @@ import static org.example.constants.GeneralConstants.TRAINEE_NOT_FOUND_EXCEPTION
 import static org.example.constants.GeneralConstants.TRAINER_NOT_FOUND_EXCEPTION_MSG;
 
 @Getter
-@RequiredArgsConstructor
 @Component
 public class DefaultTrainerFacade extends DefaultUserFacade implements TrainerFacade {
 
-    private final TrainerService trainerService;
-    private final TraineeService traineeService;
-    private final TrainingService trainingService;
-    private final ModelMapper modelMapper;
-    private final TrainerWorkloadService trainerWorkloadService;
+    private TrainerService trainerService;
+    private TraineeService traineeService;
+    private TrainingService trainingService;
+    private ModelMapper modelMapper;
+    private TrainerWorkloadService trainerWorkloadService;
 
     @Override
     public AfterRegistrationResponse registerTrainer(TrainerDto trainerDto) {
@@ -105,5 +105,30 @@ public class DefaultTrainerFacade extends DefaultUserFacade implements TrainerFa
     private void checkIfTraineeExists(String username) {
         getTraineeService().getTraineeForUsername(username)
                 .orElseThrow(() -> new NotFoundException(formExceptionMessage(TRAINEE_NOT_FOUND_EXCEPTION_MSG, username)));
+    }
+
+    @Autowired
+    public void setTrainerService(TrainerService trainerService) {
+        this.trainerService = trainerService;
+    }
+
+    @Autowired
+    public void setTraineeService(TraineeService traineeService) {
+        this.traineeService = traineeService;
+    }
+
+    @Autowired
+    public void setTrainingService(TrainingService trainingService) {
+        this.trainingService = trainingService;
+    }
+
+    @Autowired
+    public void setModelMapper(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
+    }
+
+    @Autowired
+    public void setTrainerWorkloadService(@Qualifier("jmsTrainerWorkloadService") TrainerWorkloadService trainerWorkloadService) {
+        this.trainerWorkloadService = trainerWorkloadService;
     }
 }
