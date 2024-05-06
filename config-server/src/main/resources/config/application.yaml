@@ -4,3 +4,17 @@ application:
       secret-key: 3WHku3bJSlAmep3DaKmBn9jbTHUsHB2AJRA8AVXNUS756lD9GBF9Sd7b/EB7etaL
       # 1800000 milliseconds = 30 minutes
       expiration: 1800000
+
+spring:
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: admin
+    password: admin
+    pool:
+      enabled: false
+
+activemq:
+  query:
+    name:
+      trainerworkload: "trainer-workload"
+      report: "report"
