@@ -7,7 +7,7 @@ application:
 
 spring:
   activemq:
-    broker-url: tcp://localhost:61616
+    broker-url: ${ACTIVEMQ_BROKER_URL:tcp://localhost:61616}
     user: admin
     password: admin
     pool:

@@ -1,19 +1,13 @@
 package com.example.trainermanager.repository;
 
-import com.example.trainermanager.entity.TrainerTrainingSession;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import com.example.trainermanager.entity.TrainerTrainingSummary;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.time.LocalDate;
-import java.util.List;
+import java.util.Optional;
 
-public interface TrainerTrainingSessionRepository extends CrudRepository<TrainerTrainingSession, Integer> {
+public interface TrainerTrainingSessionRepository extends MongoRepository<TrainerTrainingSummary, String> {
 
-    @Query("SELECT YEAR(t.trainingDate) as year, MONTH(t.trainingDate) as month, SUM(t.trainingDuration) as totalDuration " +
-            "FROM TrainerTrainingSession t " +
-            "WHERE t.username = :username AND t.isActive = true AND t.trainingDate < CURRENT_DATE " +
-            "GROUP BY YEAR(t.trainingDate), MONTH(t.trainingDate)")
-    List<Object[]> getTotalDurationForEachMonth(String username);
-
-    void deleteByUsernameAndTrainingDate(String username, LocalDate trainingDate);
+    Optional<TrainerTrainingSummary> findByTrainerUsername(String username);
+    Optional<TrainerTrainingSummary> findByTrainerUsernameAndTrainerFirstNameAndTrainerLastName
+            (String trainerUsername, String trainerFirstName, String trainerLastName);
 }

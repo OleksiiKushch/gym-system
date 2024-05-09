@@ -2,7 +2,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3307/gymsystem?useSSL=false
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3307/gymsystem}
     username: root
     password: toor
     hikari:
