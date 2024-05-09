@@ -1,14 +1,13 @@
 package com.example.trainermanager.service;
 
-import com.example.trainermanager.entity.TrainerTrainingSession;
+import com.example.trainermanager.dto.request.TrainerWorkloadRequest;
 
 import java.time.Month;
-import java.time.Year;
 import java.util.Map;
 
 public interface TrainerTrainingSessionService {
 
-    void saveTrainerTrainingSession(TrainerTrainingSession trainerTrainingSession);
-    Map<Year, Map<Month, Integer>> formReport(String username);
-    void deleteTrainerTrainingSession(TrainerTrainingSession trainerTrainingSession);
+    void updateTrainerTrainingSummary(TrainerWorkloadRequest trainerWorkloadRequest);
+    Map<Integer, Map<Month, Integer>> formReport(String username);
+    void deleteTrainerTrainingSession(TrainerWorkloadRequest trainerWorkloadRequest);
 }

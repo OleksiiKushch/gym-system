@@ -2,14 +2,11 @@ package com.example.trainermanager.controller;
 
 import com.example.trainermanager.dto.request.TrainerWorkloadRequest;
 import com.example.trainermanager.entity.ActionType;
-import com.example.trainermanager.entity.TrainerTrainingSession;
 import com.example.trainermanager.exception.RequestValidationException;
 import com.example.trainermanager.service.TrainerTrainingSessionService;
-import com.example.trainermanager.utils.YearKeyDeserializer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
@@ -17,7 +14,6 @@ import jakarta.jms.TextMessage;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
@@ -25,7 +21,6 @@ import org.springframework.validation.SimpleErrors;
 import org.springframework.validation.Validator;
 
 import java.time.Month;
-import java.time.Year;
 import java.util.List;
 import java.util.Map;
 
@@ -38,11 +33,11 @@ public class TrainerManagerMessageListener {
     private static final String RECEIVED_MESSAGE_MSG = "Received message: {}";
     public static final String REQUEST_VALIDATION_FAILED_MSG = "Request validation failed: {}";
     public static final String REQUIRED_INFORMATION_MISSING_MSG = "Required information missing. Request validation failed: %s";
+    public static final String MESSAGE_TYPE_MISMATCH = "Message type mismatch";
 
     private static final ObjectMapper objectMapper = createObjectMapper();
 
     private final TrainerTrainingSessionService trainerTrainingSessionService;
-    private final ModelMapper modelMapper;
     private final JmsTemplate jmsTemplate;
     private final Validator trainerWorkloadRequestValidator;
 
@@ -50,9 +45,6 @@ public class TrainerManagerMessageListener {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        SimpleModule module = new SimpleModule();
-        module.addKeyDeserializer(Year.class, new YearKeyDeserializer());
-        mapper.registerModule(module);
         return mapper;
     }
 
@@ -62,14 +54,13 @@ public class TrainerManagerMessageListener {
         message.stream()
                 .map(this::convertToTrainerWorkloadRequest)
                 .peek(this::validateTrainerWorkloadRequestOrThrowException)
-                .map(this::convertToTrainerTrainingSession)
-                .forEach(entry -> { // key is TrainerTrainingSession, value is ActionType
-                            switch (ActionType.valueOf(entry.getValue())) {
+                .forEach(request -> {
+                            switch (ActionType.valueOf(request.getActionType())) {
                                 case ADD:
-                                    getTrainerTrainingSessionService().saveTrainerTrainingSession(entry.getKey());
+                                    getTrainerTrainingSessionService().updateTrainerTrainingSummary(request);
                                     break;
                                 case DELETE:
-                                    getTrainerTrainingSessionService().deleteTrainerTrainingSession(entry.getKey());
+                                    getTrainerTrainingSessionService().deleteTrainerTrainingSession(request);
                                     break;
                             }
                         }
@@ -78,16 +69,22 @@ public class TrainerManagerMessageListener {
 
     @JmsListener(destination = "${activemq.query.name.report}")
     public void receiveMessage(Message message) throws JMSException, JsonProcessingException {
-        log.info(RECEIVED_MESSAGE_MSG, message);
-        Map<Year, Map<Month, Integer>> report = getTrainerTrainingSessionService()
-                .formReport(((TextMessage) message).getText());
+        if (message instanceof TextMessage testMessage) {
+            final String username = testMessage.getText();
+            log.info(RECEIVED_MESSAGE_MSG, username);
+            Map<Integer, Map<Month, Integer>> report = getTrainerTrainingSessionService().formReport(username);
 
-        String reply = objectMapper.writeValueAsString(report);
+            String reply = objectMapper.writeValueAsString(report);
 
-        jmsTemplate.convertAndSend(message.getJMSReplyTo(), reply, m -> {
-            m.setJMSCorrelationID(message.getJMSCorrelationID());
-            return m;
-        });
+            jmsTemplate.convertAndSend(message.getJMSReplyTo(), reply, m -> {
+                m.setJMSCorrelationID(message.getJMSCorrelationID());
+                return m;
+            });
+        } else {
+            log.error(MESSAGE_TYPE_MISMATCH);
+            throw new RequestValidationException(MESSAGE_TYPE_MISMATCH);
+        }
+
     }
 
     private void validateTrainerWorkloadRequestOrThrowException(TrainerWorkloadRequest request) {
@@ -101,10 +98,6 @@ public class TrainerManagerMessageListener {
 
     private TrainerWorkloadRequest convertToTrainerWorkloadRequest(Object message) {
         return objectMapper.convertValue(message, TrainerWorkloadRequest.class);
-    }
-
-    private Map.Entry<TrainerTrainingSession, String> convertToTrainerTrainingSession(TrainerWorkloadRequest request) {
-        return Map.entry(getModelMapper().map(request, TrainerTrainingSession.class), request.getActionType());
     }
 
     private String formErrorMessage(Object... args) {

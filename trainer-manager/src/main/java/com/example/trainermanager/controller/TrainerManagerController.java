@@ -2,7 +2,6 @@ package com.example.trainermanager.controller;
 
 import com.example.trainermanager.dto.request.TrainerWorkloadRequest;
 import com.example.trainermanager.entity.ActionType;
-import com.example.trainermanager.entity.TrainerTrainingSession;
 import com.example.trainermanager.service.TrainerTrainingSessionService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -33,14 +32,12 @@ public class TrainerManagerController {
         log.info(RECEIVED_REQUEST_TO_UPDATE_TRAINING_SESSION_MSG, workloadRequests);
 
         for (TrainerWorkloadRequest workloadRequest : workloadRequests) {
-            TrainerTrainingSession trainerTrainingSession =
-                    getModelMapper().map(workloadRequest, TrainerTrainingSession.class);
             switch (ActionType.valueOf(workloadRequest.getActionType())) {
                 case ADD:
-                    getTrainerTrainingSessionService().saveTrainerTrainingSession(trainerTrainingSession);
+                    getTrainerTrainingSessionService().updateTrainerTrainingSummary(workloadRequest);
                     break;
                 case DELETE:
-                    getTrainerTrainingSessionService().deleteTrainerTrainingSession(trainerTrainingSession);
+                    getTrainerTrainingSessionService().deleteTrainerTrainingSession(workloadRequest);
                     break;
             }
         }

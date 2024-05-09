@@ -1,6 +1,8 @@
 version: '3.8'
 
 volumes:
+  trainer-manager-db-data:
+    driver: local
   database:
     driver: local
 
@@ -8,16 +10,56 @@ services:
 
   activemq:
     image: webcenter/activemq:latest
+    container_name: activemq
     ports:
-      - "8161:8161"
-      - "61616:61616"
-      - "61613:61613"
+      - "8161:8161"   # web    (http://localhost:8161/admin)
+      - "61616:61616" # broker (jms)
     environment:
       ACTIVEMQ_REMOVE_DEFAULT_ACCOUNT: "true"
       ACTIVEMQ_ADMIN_LOGIN: "admin"
       ACTIVEMQ_ADMIN_PASSWORD: "admin"
       ACTIVEMQ_MIN_MEMORY: "512"
       ACTIVEMQ_MAX_MEMORY: "2048"
+
+  eureka-server:
+    image: eureka-server:1.0
+    container_name: eureka-server
+    build: './eureka-server'
+    ports:
+      - "8761:8761"
+    restart: always
+
+  config-server:
+    image: config-server:1.0
+    container_name: config-server
+    build: './config-server'
+    ports:
+      - "8888:8888"
+    restart: always
+    environment:
+      EUREKA_URI: http://eureka-server:8761/eureka
+
+  trainer-manager-mongo:
+    image: mongo:latest
+    container_name: trainer-manager-db
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - trainer-manager-db-data:/data/db
+
+  trainer-manager:
+    image: trainer-manager:1.0
+    container_name: trainer-manager
+    build: './trainer-manager'
+    ports:
+      - "8081:8081"
+    restart: always
+    environment:
+      EUREKA_URI: http://eureka-server:8761/eureka
+      CONFIG_SERVER_URI: http://config-server:8888
+      ACTIVEMQ_BROKER_URL: tcp://activemq:61616
+      MONGODB_URI: mongodb://trainer-manager-db:27017/trainermanagerdb
 
   db:
     image: mysql:8.3.0
@@ -39,27 +81,30 @@ services:
       - "8080:8080"
     restart: always
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/gymsystem
+      EUREKA_URI: http://eureka-server:8761/eureka
+      CONFIG_SERVER_URI: http://config-server:8888
+      ACTIVEMQ_BROKER_URL: tcp://activemq:61616
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/gymsystem
     volumes:
       - ./logs:/app/logs
 
-  grafana:
-    image: grafana/grafana
-    container_name: grafana
-    ports:
-      - "3000:3000"
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=nimda
-    volumes:
-      - ./monitoring/config/grafana/provisioning:/etc/grafana/provisioning
-      - ./monitoring/grafana:/var/lib/grafana
-
-  prometheus:
-    image: prom/prometheus
-    container_name: prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./monitoring/config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./monitoring/prometheus:/prometheus
+#  grafana:
+#    image: grafana/grafana
+#    container_name: grafana
+#    ports:
+#      - "3000:3000"
+#    environment:
+#      - GF_SECURITY_ADMIN_USER=admin
+#      - GF_SECURITY_ADMIN_PASSWORD=nimda
+#    volumes:
+#      - ./monitoring/config/grafana/provisioning:/etc/grafana/provisioning
+#      - ./monitoring/grafana:/var/lib/grafana
+#
+#  prometheus:
+#    image: prom/prometheus
+#    container_name: prometheus
+#    ports:
+#      - "9090:9090"
+#    volumes:
+#      - ./monitoring/config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+#      - ./monitoring/prometheus:/prometheus
