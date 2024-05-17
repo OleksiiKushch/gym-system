@@ -37,7 +37,7 @@ public class Training {
     @ManyToOne
     private Trainer trainer;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String trainingName;
 
     @ManyToOne

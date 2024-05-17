@@ -1,0 +1,9 @@
+id,first_name,last_name,username,password,is_active
+
+# Trainees
+13,"Jose","Garcia","Jose.Garcia",$2a$10$ZRwIeZUF4RvRe5A5Lzm9.u.Ar180a7Nw8zYVjUGKReI.BiGy01baW,TRUE
+
+# Trainers
+14,"Maria","Acosta","Maria.Acosta",$2a$10$PuGZyTPSlWE6XPD909hRuejcSV80YMO17FMCuEW6pWzTk0RKDO7Jq,TRUE
+15,"Priya","Sharma","Priya.Sharma",$2a$10$PuGZyTPSlWE6XPD909hRuejcSV80YMO17FMCuEW6pWzTk0RKDO7Jq,TRUE
+16,"Rajesh","Kumar","Rajesh.Kumar",$2a$10$PuGZyTPSlWE6XPD909hRuejcSV80YMO17FMCuEW6pWzTk0RKDO7Jq,TRUE

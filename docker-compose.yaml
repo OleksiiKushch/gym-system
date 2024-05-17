@@ -76,15 +76,22 @@ services:
   gym-system:
     image: gym-system:1.0
     container_name: gym-system
-    build: '.'
+    build:
+      context: '.'
+      args:
+        SKIP_TESTS: true
     ports:
       - "8080:8080"
+      - "5005:5005" # Remote debug port
     restart: always
     environment:
       EUREKA_URI: http://eureka-server:8761/eureka
       CONFIG_SERVER_URI: http://config-server:8888
       ACTIVEMQ_BROKER_URL: tcp://activemq:61616
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/gymsystem
+      _JAVA_OPTIONS: >
+        -Xdebug
+        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     volumes:
       - ./logs:/app/logs
 
