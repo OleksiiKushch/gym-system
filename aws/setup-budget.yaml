@@ -1,0 +1,35 @@
+Resources:
+  Budget:
+    Type: 'AWS::Budgets::Budget'
+    Properties:
+      Budget:
+        BudgetLimit:
+          Amount: 10
+          Unit: 'USD'
+        TimeUnit: 'MONTHLY'
+        BudgetType: 'COST'
+      NotificationsWithSubscribers:
+        - Notification:
+            ComparisonOperator: 'GREATER_THAN'
+            NotificationType: 'ACTUAL'
+            Threshold: 40
+            ThresholdType: 'PERCENTAGE'
+          Subscribers:
+            - SubscriptionType: 'EMAIL'
+              Address: 'oleksii.kushch@nure.ua'
+        - Notification:
+            ComparisonOperator: 'GREATER_THAN'
+            NotificationType: 'ACTUAL'
+            Threshold: 80
+            ThresholdType: 'PERCENTAGE'
+          Subscribers:
+            - SubscriptionType: 'EMAIL'
+              Address: 'oleksii.kushch@nure.ua'
+        - Notification:
+            ComparisonOperator: 'GREATER_THAN'
+            NotificationType: 'ACTUAL'
+            Threshold: 100
+            ThresholdType: 'PERCENTAGE'
+          Subscribers:
+            - SubscriptionType: 'EMAIL'
+              Address: 'oleksii.kushch@nure.ua'
