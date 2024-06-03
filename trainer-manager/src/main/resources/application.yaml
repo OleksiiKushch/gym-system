@@ -7,6 +7,8 @@ spring:
     mongodb:
       uri: ${MONGODB_URI:mongodb://localhost:27017/trainermanagerdb}
       auto-index-creation: true
+      collections:
+        report: trainer_training_summary
 
 server:
   port: 8081

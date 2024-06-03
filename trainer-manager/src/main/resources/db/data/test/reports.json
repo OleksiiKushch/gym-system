@@ -1,0 +1,34 @@
+{
+  "docs": [
+    {
+      "_id": {"$oid": "6646a512e4f8a5306342b392"},
+      "_class": "com.example.trainermanager.entity.TrainerTrainingSummary",
+      "report": {
+        "2024": {
+          "JUNE": 45,
+          "MAY": 90
+        }
+      },
+      "trainerFirstName": "Priya",
+      "trainerLastName": "Sharma",
+      "trainerStatus": true,
+      "trainerUsername": "Priya.Sharma"
+    },
+    {
+      "_id": {"$oid": "6646ab20e4f8a5306342b393"},
+      "_class": "com.example.trainermanager.entity.TrainerTrainingSummary",
+      "report": {
+        "2024": {
+          "APRIL": 45
+        },
+        "2023": {
+          "DECEMBER": 135
+        }
+      },
+      "trainerFirstName": "Rajesh",
+      "trainerLastName": "Kumar",
+      "trainerStatus": true,
+      "trainerUsername": "Rajesh.Kumar"
+    }
+  ]
+}

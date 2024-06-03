@@ -26,11 +26,17 @@
         <spring.openapi.version>2.3.0</spring.openapi.version>
         <spring-cloud.version>2023.0.1</spring-cloud.version>
 
+        <cucumber.version>7.17.0</cucumber.version>
+        <testcontainers.version>1.19.8</testcontainers.version>
+<!--        <junit-suite.version>1.11.0-M1</junit-suite.version>-->
+        <junit-vintage.verison>5.11.0-M1</junit-vintage.verison>
+
         <mysql.connector.version>8.3.0</mysql.connector.version>
 
         <modelmapper.version>3.2.0</modelmapper.version>
         <jjwt.version>0.12.5</jjwt.version>
         <guava.version>33.1.0-jre</guava.version>
+        <snakeyaml.version>2.2</snakeyaml.version>
     </properties>
 
     <dependencyManagement>
@@ -56,7 +62,66 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-spring</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mysql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>activemq</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mongodb</artifactId>
+            <scope>test</scope>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.junit.platform</groupId>-->
+<!--            <artifactId>junit-platform-suite-engine</artifactId>-->
+<!--            <version>${junit-suite.version}</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>${junit-vintage.verison}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -146,22 +211,137 @@
             <version>${guava.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${snakeyaml.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <configuration>
+                        <excludes>
+                            <exclude>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.2.5</version>
+                    <configuration>
+                        <includes>
+                            <include>**/*UnitTest.java</include>
+                            <include>**/RunCucumberComponentTests.java</include>
+                            <include>**/RunCucumberIntegrationTests.java</include>
+                        </includes>
+<!--                        <shutdown>kill</shutdown>-->
+<!--                        <forkCount>1</forkCount>-->
+<!--                        <reuseForks>false</reuseForks>-->
+                    </configuration>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
         <plugins>
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <executions>
+
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>jcc-report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>jacoco-check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <phase>test</phase>
+                        <configuration>
+                            <rules>
+                                <rule>
+<!--                                    <element>BUNDLE</element>-->
+<!--                                    <element>PACKAGE</element>-->
+<!--                                    <element>SOURCEFILE</element>-->
+                                    <element>CLASS</element>
+<!--                                    <element>METHOD</element>-->
+                                    <limits>
+                                        <limit>
+                                            <counter>INSTRUCTION</counter>
+<!--                                            <counter>LINE</counter>-->
+<!--                                            <counter>BRANCH</counter>-->
+<!--                                            <counter>COMPLEXITY</counter>-->
+<!--                                            <counter>METHOD</counter>-->
+<!--                                            <counter>CLASS</counter>-->
+
+                                            <value>MISSEDRATIO</value>
+                                            <maximum>100%</maximum> <!-- 20% or 0.2 -->
+<!--                                            <value>MISSEDCOUNT</value>-->
+<!--                                            <maximum>2</maximum>-->
+<!--                                            <value>COVEREDRATIO</value>-->
+<!--                                            <minimum>90%</minimum>-->
+<!--                                            <value>COVEREDCOUNT</value>-->
+<!--                                            <minimum>90</minimum>-->
+<!--                                            <value>TOTALCOUNT</value>-->
+<!--                                            <minimum>90</minimum>-->
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+
+                </executions>
                 <configuration>
                     <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
+                        <exclude>org/example/dto/**</exclude>
+                        <exclude>org/example/entity/**</exclude>
+                        <exclude>org/example/constants/**</exclude>
+<!--                        <exclude>org/example/config/**</exclude>-->
+
+<!--                        <exclude>org/example/GymApp.class</exclude>-->
+                        <exclude>org/example/aspect/AbstractControllerAspect.class</exclude>
+                        <exclude>org/example/aspect/CircuitBreakerAspect.class</exclude>
+                        <exclude>org/example/service/impl/DefaultTrainerWorkloadService.class</exclude>
                     </excludes>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 

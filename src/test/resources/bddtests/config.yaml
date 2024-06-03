@@ -1,0 +1,10 @@
+database:
+  name: "gymsystem"
+  dockerImage: "mysql:8.3.0"
+
+messageBroker:
+  dockerImage: "apache/activemq-classic:5.18.3"
+
+trainerManager:
+  pathToDockerfile: "trainer-manager/Dockerfile"
+  databaseDockerImage: "mongo:4.0.10"

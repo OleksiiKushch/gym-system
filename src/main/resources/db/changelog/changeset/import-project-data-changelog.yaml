@@ -42,9 +42,11 @@ databaseChangeLog:
             tableName: trainee_trainer
             file: db/data/project/trainee_trainer.csv
 
+  # Restart table ids
+
   - changeSet:
-      id: restart_table_ids
+      id: project_restart_table_ids
       author: admin
       changes:
         - sqlFile:
-            path: db/sql/restart_table_ids.sql
+            path: db/sql/project/restart_table_ids.sql

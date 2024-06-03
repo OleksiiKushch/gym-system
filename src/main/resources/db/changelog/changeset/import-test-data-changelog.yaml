@@ -1,0 +1,36 @@
+databaseChangeLog:
+
+  # Import test data
+
+  - changeSet:
+      id: test_fill_users_table
+      author: admin
+      changes:
+        - loadData:
+            tableName: users
+            file: db/data/test/users.csv
+
+  - changeSet:
+      id: test_fill_trainees_table
+      author: admin
+      changes:
+        - loadData:
+            tableName: trainees
+            file: db/data/test/trainees.csv
+
+  - changeSet:
+      id: test_fill_trainers_table
+      author: admin
+      changes:
+        - loadData:
+            tableName: trainers
+            file: db/data/test/trainers.csv
+
+  # Restart table ids
+
+  - changeSet:
+      id: test_restart_table_ids
+      author: admin
+      changes:
+        - sqlFile:
+            path: db/sql/test/restart_table_ids.sql

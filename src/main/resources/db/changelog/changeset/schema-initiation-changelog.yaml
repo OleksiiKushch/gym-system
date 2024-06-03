@@ -197,6 +197,16 @@ databaseChangeLog:
   # Add unique constraints
 
   - changeSet:
+      id: add_unique_constraints_for_training_name
+      author: admin
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: training_name
+            constraintName: uc_training_name
+            tableName: trainings
+
+  - changeSet:
       id: add_unique_constraints_for_training_types_name
       author: admin
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
